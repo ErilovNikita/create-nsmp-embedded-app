@@ -5,6 +5,24 @@
   "bin": {
     "create-nsmp-embedded-app": "cli/index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErilovNikita/js-api.git"
+  },
+  "homepage": "https://github.com/ErilovNikita/js-api#readme",
+  "bugs": {
+    "url": "https://github.com/ErilovNikita/js-api/issues"
+  },
+  "keywords": [
+    "nsmp",
+    "jsapi",
+    "js-api",
+    "naumen",
+    "vue",
+    "vue3",
+    "vite",
+    "embedded-application"
+  ],
   "scripts": {
     "dev": "npm --prefix template run dev --"
   },
