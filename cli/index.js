@@ -54,7 +54,10 @@ try {
 
 await fs.cp(templateDir, targetDir, {
   recursive: true,
-  filter: source => !source.includes('node_modules')
+  filter: source => {
+    const relativePath = path.relative(templateDir, source)
+    return !relativePath.split(path.sep).includes('node_modules')
+  }
 })
 
 const packageJsonPath = path.join(targetDir, 'package.json')
