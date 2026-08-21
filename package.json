@@ -1,32 +1,33 @@
 {
-  "name": "create-nsmp-embedded-app",
-  "version": "1.0.6",
-  "type": "module",
-  "bin": {
-    "create-nsmp-embedded-app": "cli/index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ErilovNikita/create-nsmp-embedded-app.git"
-  },
-  "homepage": "https://github.com/ErilovNikita/create-nsmp-embedded-app#readme",
-  "bugs": {
-    "url": "https://github.com/ErilovNikita/create-nsmp-embedded-app/issues"
-  },
-  "keywords": [
-    "nsmp",
-    "jsapi",
-    "js-api",
-    "naumen",
-    "vue",
-    "vue3",
-    "vite",
-    "embedded-application"
-  ],
-  "scripts": {
-    "dev": "npm --prefix template run dev --"
-  },
-  "dependencies": {
-    "prompts": "^2.4.2"
-  }
+    "name": "create-nsmp-embedded-app",
+    "license": "MIT",
+    "version": "1.0.6",
+    "type": "module",
+    "bin": {
+        "create-nsmp-embedded-app": "cli/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ErilovNikita/create-nsmp-embedded-app.git"
+    },
+    "homepage": "https://github.com/ErilovNikita/create-nsmp-embedded-app#readme",
+    "bugs": {
+        "url": "https://github.com/ErilovNikita/create-nsmp-embedded-app/issues"
+    },
+    "keywords": [
+        "nsmp",
+        "jsapi",
+        "js-api",
+        "naumen",
+        "vue",
+        "vue3",
+        "vite",
+        "embedded-application"
+    ],
+    "scripts": {
+        "dev": "npm --prefix template run dev --"
+    },
+    "dependencies": {
+        "prompts": "^2.4.2"
+    }
 }
