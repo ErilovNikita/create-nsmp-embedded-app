@@ -5,6 +5,15 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      publish_method:
+        description: How should the package be published?
+        required: true
+        default: token
+        type: choice
+        options:
+          - token
+          - oidc
 
 permissions:
   contents: read
@@ -83,7 +92,7 @@ jobs:
 
   publish_manual:
     name: Publish to npm manually
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && inputs.publish_method == 'token'
     needs: verify
     runs-on: ubuntu-latest
 
@@ -125,3 +134,47 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public
+
+  publish_manual_oidc:
+    name: Publish to npm manually via OIDC
+    if: github.event_name == 'workflow_dispatch' && inputs.publish_method == 'oidc'
+    needs: verify
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout commit
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Read package metadata
+        id: package
+        run: |
+          echo "name=$(node -p "require('./package.json').name")" >> "$GITHUB_OUTPUT"
+          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Check package version is unpublished
+        env:
+          PACKAGE_NAME: ${{ steps.package.outputs.name }}
+          PACKAGE_VERSION: ${{ steps.package.outputs.version }}
+        run: |
+          if npm view "$PACKAGE_NAME@$PACKAGE_VERSION" version >/dev/null 2>&1; then
+            echo "Version $PACKAGE_NAME@$PACKAGE_VERSION is already published."
+            exit 1
+          fi
+
+      - name: Publish package via OIDC
+        run: npm publish --provenance --access public
