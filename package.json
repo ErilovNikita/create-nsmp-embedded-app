@@ -7,7 +7,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ErilovNikita/js-api.git"
+    "url": "https://github.com/ErilovNikita/js-api.git"
   },
   "homepage": "https://github.com/ErilovNikita/js-api#readme",
   "bugs": {
