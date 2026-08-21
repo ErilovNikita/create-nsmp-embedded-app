@@ -35,4 +35,12 @@ jobs:
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public --provenance --ignore-scripts
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "NPM_TOKEN secret is missing or unavailable."
+            exit 1
+          fi
+
+          npm config set "//registry.npmjs.org/:_authToken" "$NODE_AUTH_TOKEN"
+          echo "Authenticated npm user: $(npm whoami --registry=https://registry.npmjs.org)"
+          npm publish --access public --provenance --ignore-scripts
