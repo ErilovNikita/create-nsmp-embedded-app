@@ -58,6 +58,31 @@ try {
   // Папка отсутствует, можно создавать проект.
 }
 
+let iconsVersion
+
+if (response.icons) {
+  const result = spawnSync('npm', ['view', 'nsmp-icons', 'version', '--json'], {
+    encoding: 'utf8'
+  })
+
+  if (result.status !== 0) {
+    const errorMessage = result.stderr?.trim()
+    console.error(
+      `Не удалось получить последнюю версию nsmp-icons из npm.${
+        errorMessage ? `\n${errorMessage}` : ''
+      }`
+    )
+    process.exit(result.status ?? 1)
+  }
+
+  iconsVersion = result.stdout.trim().replace(/^"|"$/g, '')
+
+  if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(iconsVersion)) {
+    console.error('npm вернул некорректную версию nsmp-icons.')
+    process.exit(1)
+  }
+}
+
 await fs.cp(templateDir, targetDir, {
   recursive: true,
   filter: source => {
@@ -75,7 +100,7 @@ packageJson.name = response.projectName
 
 if (response.icons) {
   packageJson.dependencies ??= {}
-  packageJson.dependencies['nsmp-icons'] = 'latest'
+  packageJson.dependencies['nsmp-icons'] = `^${iconsVersion}`
 }
 
 await fs.writeFile(
