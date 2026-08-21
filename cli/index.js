@@ -27,6 +27,12 @@ const questions = [
     name: 'install',
     message: 'Установить зависимости?',
     initial: true
+  },
+  {
+    type: 'confirm',
+    name: 'icons',
+    message: 'Добавить nsmp-icons в проект?',
+    initial: true
   }
 ]
 
@@ -66,6 +72,11 @@ const packageJson = JSON.parse(
 )
 
 packageJson.name = response.projectName
+
+if (response.icons) {
+  packageJson.dependencies ??= {}
+  packageJson.dependencies['nsmp-icons'] = 'latest'
+}
 
 await fs.writeFile(
   packageJsonPath,
