@@ -1,0 +1,14 @@
+{
+  "name": "create-nsmp-embedded-app",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "create-nsmp-embedded-app": "cli/index.js"
+  },
+  "scripts": {
+    "dev": "npm --prefix template run dev --"
+  },
+  "dependencies": {
+    "prompts": "^2.4.2"
+  }
+}

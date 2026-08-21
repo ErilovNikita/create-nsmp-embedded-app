@@ -1,0 +1,22 @@
+# Local dependencies must never be published inside the template.
+node_modules/
+template/node_modules/
+template/src/node_modules/
+**/node_modules/
+
+# Local environment and generated files
+*.env
+*.env.*
+template/.env.development
+!template/example.env
+**/dist/
+**/build/
+**/*.log
+**/.DS_Store
+
+# Repository-only files
+.github/
+.gitignore
+.npmignore
+README.md
+docs/
