@@ -69,6 +69,15 @@ await fs.writeFile(
   `${JSON.stringify(packageJson, null, 2)}\n`
 )
 
+const indexHtmlPath = path.join(targetDir, 'index.html')
+const indexHtml = await fs.readFile(indexHtmlPath, 'utf8')
+const updatedIndexHtml = indexHtml.replace(
+  /(<title>)[^<]*(<\/title>)/i,
+  `$1${response.projectName}$2`
+)
+
+await fs.writeFile(indexHtmlPath, updatedIndexHtml)
+
 if (response.install) {
   const result = spawnSync('npm', ['install'], {
     cwd: targetDir,
