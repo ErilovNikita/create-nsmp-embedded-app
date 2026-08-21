@@ -7,11 +7,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ErilovNikita/js-api.git"
+    "url": "https://github.com/ErilovNikita/create-nsmp-embedded-app.git"
   },
-  "homepage": "https://github.com/ErilovNikita/js-api#readme",
+  "homepage": "https://github.com/ErilovNikita/create-nsmp-embedded-app#readme",
   "bugs": {
-    "url": "https://github.com/ErilovNikita/js-api/issues"
+    "url": "https://github.com/ErilovNikita/create-nsmp-embedded-app/issues"
   },
   "keywords": [
     "nsmp",
