@@ -1,7 +1,7 @@
 {
     "name": "create-nsmp-embedded-app",
     "license": "MIT",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "type": "module",
     "bin": {
         "create-nsmp-embedded-app": "cli/index.js"
