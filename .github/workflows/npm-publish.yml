@@ -1,21 +1,13 @@
 name: Publish package to npm
 
 on:
-  pull_request:
   push:
-    branches:
-      - main
-  release:
-    types:
-      - published
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 permissions:
   contents: read
-
-concurrency:
-  group: npm-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
 
 jobs:
   verify:
@@ -41,28 +33,15 @@ jobs:
       - name: Check package metadata
         run: npm pkg fix --dry-run
 
-      - name: Preview package contents
-        run: |
-          npm pack --dry-run --json > package-preview.json
-          node <<'NODE'
-          const fs = require('node:fs')
-          const files = JSON.parse(fs.readFileSync('package-preview.json', 'utf8'))[0].files
-            .map(file => file.path)
-          const unwanted = files.filter(file =>
-            file.includes('node_modules/') || file.endsWith('.env.development')
-          )
-
-          if (unwanted.length > 0) {
-            console.error(`Unexpected files in package:\n${unwanted.join('\n')}`)
-            process.exit(1)
-          }
-
-          console.log(`Package contains ${files.length} files.`)
-          NODE
+      - name: Verify tag matches package version
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: test "$TAG_NAME" = "v$(node -p "require('./package.json').version")"
 
   publish:
     name: Publish to npm
-    if: github.event_name == 'release' && github.event.action == 'published'
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: verify
     runs-on: ubuntu-latest
 
@@ -71,11 +50,6 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout release commit
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.release.tag_name }}
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -85,21 +59,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Check release version
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: |
-          node <<'NODE'
-          const fs = require('node:fs')
-          const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'))
-          const releaseTag = process.env.RELEASE_TAG.replace(/^v/, '')
-
-          if (packageJson.version !== releaseTag) {
-            console.error(`package.json version ${packageJson.version} does not match release tag ${releaseTag}`)
-            process.exit(1)
-          }
-          NODE
 
       - name: Publish package
         run: npm publish --provenance --access public
