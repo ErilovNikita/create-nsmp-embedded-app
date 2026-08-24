@@ -1,4 +1,7 @@
 # Create NSMP Embedded App
+
+[![npm version](https://img.shields.io/npm/v/create-nsmp-embedded-app?logo=npm)](https://www.npmjs.com/package/create-nsmp-embedded-app) [![npm downloads](https://img.shields.io/npm/dm/create-nsmp-embedded-app?logo=npm)](https://www.npmjs.com/package/create-nsmp-embedded-app) [![Workflow status](https://img.shields.io/github/actions/workflow/status/ErilovNikita/create-nsmp-embedded-app/npm-publish.yml?branch=main&logo=githubactions&label=build)](https://github.com/ErilovNikita/create-nsmp-embedded-app/actions/workflows/npm-publish.yml) [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A518-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
 > Интерактивный генератор embedded-приложений на Vue 3, TypeScript и Vite.
 
 ```text
