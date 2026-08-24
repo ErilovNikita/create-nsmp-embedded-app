@@ -28,7 +28,7 @@ test('createDependencyQuestion creates a unique prompt for a package', () => {
     assert.deepEqual(createDependencyQuestion({ name: '@scope/package', version: '1.2.3' }, 2), {
         type: 'confirm',
         name: 'dependency_2',
-        message: 'Добавить @scope/package в проект?',
+        message: 'Подключить дополнительный пакет @scope/package?',
         initial: true
     })
 })

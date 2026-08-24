@@ -4,6 +4,7 @@ import {
     normalizeDependency,
     optionalDependencies
 } from './config.js'
+import { printCancelled } from './ui.js'
 
 export function createDependencyQuestion(dependency, index) {
     const { name } = normalizeDependency(dependency)
@@ -11,7 +12,7 @@ export function createDependencyQuestion(dependency, index) {
     return {
         type: 'confirm',
         name: `dependency_${index}`,
-        message: `Добавить ${name} в проект?`,
+        message: `Подключить дополнительный пакет ${name}?`,
         initial: true
     }
 }
@@ -23,24 +24,24 @@ export async function askProjectOptions(defaultName) {
             {
                 type: 'text',
                 name: 'projectName',
-                message: 'Имя проекта:',
+                message: 'Как будет называться проект?',
                 initial: defaultName,
                 validate: value =>
                     isValidProjectName(value) ||
-                    'Используйте только lowercase, цифры, "-".'
+                    'Допустимы строчные латинские буквы, цифры и дефис.'
             },
             ...optionalDependencies.map(createDependencyQuestion),
             {
                 type: 'confirm',
                 name: 'install',
-                message: 'Установить зависимости?',
+                message: 'Установить npm-зависимости сейчас?',
                 initial: true
             }
         ],
         {
             onCancel: () => {
                 cancelled = true
-                console.log('\nСоздание проекта отменено.')
+                printCancelled()
                 return false
             }
         }

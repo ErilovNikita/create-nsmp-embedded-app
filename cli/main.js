@@ -4,7 +4,12 @@ import { runDependencyCallbacks } from './dependencies.js'
 import { getLatestPackageVersion, installDependencies } from './npm.js'
 import { createProject } from './project.js'
 import { askProjectOptions } from './questions.js'
-import { printWelcome } from './ui.js'
+import {
+    printCompletion,
+    printProgressHeader,
+    printStep,
+    printWelcome
+} from './ui.js'
 
 export async function run(args = process.argv.slice(2)) {
     printWelcome()
@@ -13,6 +18,12 @@ export async function run(args = process.argv.slice(2)) {
     if (!options) return
 
     const targetDir = path.resolve(process.cwd(), options.projectName)
+    printProgressHeader()
+
+    if (options.dependencies.some(({ version }) => !version)) {
+        printStep('🔎', 'Проверяем актуальные версии дополнительных пакетов…')
+    }
+
     const dependencies = Object.fromEntries(
         options.dependencies.map(({ name, version }) => [
             name,
@@ -20,6 +31,7 @@ export async function run(args = process.argv.slice(2)) {
         ])
     )
 
+    printStep('🛠️', 'Создаём файлы и настраиваем проект…')
     await createProject({
         templateDir,
         targetDir,
@@ -27,21 +39,23 @@ export async function run(args = process.argv.slice(2)) {
         dependencies
     })
 
+    if (options.dependencies.some(({ callback }) => callback)) {
+        printStep('⚙️', 'Применяем настройки выбранных пакетов…')
+    }
     await runDependencyCallbacks(options.dependencies, {
         targetDir,
         projectName: options.projectName,
         versions: dependencies
     })
 
-    if (options.install) installDependencies(targetDir)
+    if (options.install) {
+        printStep('📦', 'Устанавливаем npm-зависимости…')
+        installDependencies(targetDir)
+    }
 
-    console.log(`
-Готово! Проект создан: ${targetDir}
-
-Следующие команды:
-
-  cd ${options.projectName}
-  cp example.env .env.development
-  npm run dev
-`)
+    printCompletion({
+        targetDir,
+        projectName: options.projectName,
+        installed: options.install
+    })
 }
