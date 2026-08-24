@@ -1,6 +1,5 @@
 import {createApp} from 'vue'
 import App from './App.vue'
-import '@iframe-resizer/child'
 import { createInitVariableFromEnv,initializeJsApi} from '@minitwiks/js-api'
 
 import './styles/global.css'

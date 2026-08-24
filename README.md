@@ -68,9 +68,32 @@ npm --prefix template install
 npm run dev
 ```
 
+Чтобы предложить пользователю дополнительную npm-зависимость, добавьте её имя в
+массив `optionalDependencies` в `cli/config.js`:
+
+```js
+export const optionalDependencies = [
+    'nsmp-icons',
+    {
+        name: '@scope/package',
+        version: '1.2.3',
+        callback: async ({ targetDir, projectName, packageName, version }) => {
+            // Дополнительная настройка созданного проекта.
+        }
+    }
+]
+```
+
+Строковая запись добавляет актуальную версию с префиксом `^`. Поле `version`
+записывается как есть: можно указать точную версию (`1.2.3`) или npm-диапазон
+(`~1.2.3`, `^1.2.3`). Для каждого пакета CLI автоматически создаст отдельный
+вопрос и добавит выбранную зависимость в `package.json` нового проекта. Если
+указан `callback`, он выполнится только для выбранной зависимости — после
+создания проекта, но до запуска `npm install`. Callback может быть асинхронным.
+
 После изменения CLI проверьте его синтаксис:
 ```bash
-node --check cli/index.js
+npm run check
 ```
 
 ## Лицензия
