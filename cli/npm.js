@@ -35,7 +35,12 @@ export function getLatestPackageVersion(packageName) {
 }
 
 export function installDependencies(targetDir) {
-    const result = spawnSync('npm', ['install'], {
+    const result = spawnSync('npm', [
+        'install',
+        '--silent',
+        '--no-audit',
+        '--no-fund'
+    ], {
         cwd: targetDir,
         stdio: 'inherit'
     })
