@@ -6,7 +6,8 @@ import test from 'node:test'
 import { isValidProjectName, normalizeDependency } from '../cli/config.js'
 import {
     addSideEffectImport,
-    runDependencyCallbacks
+    runDependencyCallbacks,
+    setupNsmpVueComponents
 } from '../cli/dependencies.js'
 import { createProject } from '../cli/project.js'
 import { createDependencyQuestion } from '../cli/questions.js'
@@ -86,6 +87,68 @@ test('addSideEffectImport adds the package import only once', async t => {
     assert.equal(
         await fs.readFile(mainFile, 'utf8'),
         "import '@iframe-resizer/child'\nimport { createApp } from 'vue'\n"
+    )
+})
+
+test('setupNsmpVueComponents installs and registers required plugins', async t => {
+    const targetDir = await fs.mkdtemp(path.join(os.tmpdir(), 'nsmp-cli-'))
+    t.after(() => fs.rm(targetDir, { recursive: true, force: true }))
+
+    const sourceDir = path.join(targetDir, 'src')
+    const mainFile = path.join(sourceDir, 'main.ts')
+    const appFile = path.join(sourceDir, 'App.vue')
+    await fs.mkdir(sourceDir)
+    await fs.writeFile(
+        path.join(targetDir, 'package.json'),
+        `${JSON.stringify({ dependencies: {} }, null, 2)}\n`
+    )
+    await fs.writeFile(
+        mainFile,
+        "import { createApp } from 'vue'\n\nconst app = createApp(App)\napp.mount('#app')\n"
+    )
+    await fs.writeFile(
+        appFile,
+        '<script setup lang="ts">\nconst title = \'App\'\n</script>\n\n<template>\n  <h1>{{ title }}</h1>\n  <main>Content</main>\n</template>\n'
+    )
+
+    const setupContext = {
+        targetDir,
+        packageName: '@minitwiks/nsmp-vue-components',
+        version: '^1.0.0',
+        loadPeerDependencies: async (packageName, version) => {
+            assert.equal(packageName, '@minitwiks/nsmp-vue-components')
+            assert.equal(version, '^1.0.0')
+            return {
+                vue: '^3.4.0',
+                'ant-design-vue': '^4.2.6'
+            }
+        }
+    }
+    await setupNsmpVueComponents(setupContext)
+    await setupNsmpVueComponents(setupContext)
+
+    const packageJson = JSON.parse(
+        await fs.readFile(path.join(targetDir, 'package.json'), 'utf8')
+    )
+    const mainSource = await fs.readFile(mainFile, 'utf8')
+    const appSource = await fs.readFile(appFile, 'utf8')
+
+    assert.equal(packageJson.dependencies['ant-design-vue'], '^4.2.6')
+    assert.equal(packageJson.dependencies.vue, '^3.4.0')
+    assert.equal(mainSource.match(/import Antd from 'ant-design-vue'/g).length, 1)
+    assert.equal(mainSource.match(/import \{ NsmpVueComponents \}/g).length, 1)
+    assert.equal(mainSource.match(/nsmp-vue-components\/style\.css/g).length, 1)
+    assert.equal(mainSource.match(/app\.use\(Antd\)/g).length, 1)
+    assert.equal(mainSource.match(/app\.use\(NsmpVueComponents\)/g).length, 1)
+    assert.equal(
+        appSource.match(/import \{ ConfigProvider \} from "@minitwiks\/nsmp-vue-components"/g).length,
+        1
+    )
+    assert.equal(appSource.match(/<ConfigProvider>/g).length, 1)
+    assert.equal(appSource.match(/<\/ConfigProvider>/g).length, 1)
+    assert.match(
+        appSource,
+        /<template>\n  <ConfigProvider>\n[\s\S]*<h1>\{\{ title \}\}<\/h1>[\s\S]*<main>Content<\/main>[\s\S]*  <\/ConfigProvider>\n<\/template>/
     )
 })
 

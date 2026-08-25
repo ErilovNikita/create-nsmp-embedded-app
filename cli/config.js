@@ -1,6 +1,9 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { addSideEffectImport } from './dependencies.js'
+import {
+    addSideEffectImport,
+    setupNsmpVueComponents
+} from './dependencies.js'
 
 const cliDir = path.dirname(fileURLToPath(import.meta.url))
 
@@ -13,6 +16,11 @@ export const optionalDependencies = [
         name: '@iframe-resizer/child',
         version: '5.5.8',
         callback: addSideEffectImport
+    },
+    {
+        name: '@minitwiks/nsmp-vue-components',
+        version: '^1.0.0',
+        callback: setupNsmpVueComponents
     },
     // { name: 'package', version: '1.2.3', callback: async context => {} },
 ]
