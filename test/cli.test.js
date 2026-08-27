@@ -164,6 +164,10 @@ test('createProject copies and configures the template', async t => {
         JSON.stringify({ name: 'template', dependencies: {} })
     )
     await fs.writeFile(path.join(sourceDir, 'index.html'), '<title>Template</title>')
+    await fs.writeFile(
+        path.join(sourceDir, '.env.local'),
+        'VITE_APP_CODE=template\nVITE_CUSTOM_VALUE=preserved\n'
+    )
     await fs.writeFile(path.join(sourceDir, 'node_modules', 'ignored'), '')
 
     await createProject({
@@ -186,7 +190,33 @@ test('createProject copies and configures the template', async t => {
         await fs.readFile(path.join(targetDir, 'index.html'), 'utf8'),
         '<title>generated-app</title>'
     )
+    assert.equal(
+        await fs.readFile(path.join(targetDir, '.env.local'), 'utf8'),
+        'VITE_APP_CODE=generated-app\nVITE_CUSTOM_VALUE=preserved\n'
+    )
     await assert.rejects(fs.access(path.join(targetDir, 'node_modules')))
+})
+
+test('createProject creates .env.local when it is missing from the template', async t => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'nsmp-cli-'))
+    t.after(() => fs.rm(tempDir, { recursive: true, force: true }))
+
+    const sourceDir = path.join(tempDir, 'template')
+    const targetDir = path.join(tempDir, 'generated-app')
+    await fs.mkdir(sourceDir)
+    await fs.writeFile(path.join(sourceDir, 'package.json'), JSON.stringify({ name: 'template' }))
+    await fs.writeFile(path.join(sourceDir, 'index.html'), '<title>Template</title>')
+
+    await createProject({
+        templateDir: sourceDir,
+        targetDir,
+        projectName: 'generated-app'
+    })
+
+    assert.equal(
+        await fs.readFile(path.join(targetDir, '.env.local'), 'utf8'),
+        'VITE_APP_CODE=generated-app\n'
+    )
 })
 
 test('createProject refuses to overwrite an existing directory', async t => {

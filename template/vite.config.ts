@@ -4,6 +4,9 @@ import zipPack from "vite-plugin-zip-pack";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd())
+  const proxyTarget = (env.VITE_APP_REAL_URL || 'http://localhost')
+    .replace(/\/+$/, '')
+    .replace(/\/sd$/, '')
 
   const config = {
     plugins: [
@@ -16,7 +19,7 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
           "/sd/": {
-            target: env.VITE_APP_REAL_URL,
+            target: proxyTarget,
             changeOrigin: true,
             secure: false,
             ws: true

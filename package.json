@@ -1,7 +1,7 @@
 {
     "name": "create-nsmp-embedded-app",
     "license": "MIT",
-    "version": "1.1.2",
+    "version": "1.1.3",
     "type": "module",
     "bin": {
         "create-nsmp-embedded-app": "cli/index.js"
@@ -26,6 +26,7 @@
     ],
     "scripts": {
         "dev": "npm --prefix template run dev --",
+        "build": "npm --prefix template run build",
         "check": "node --check cli/index.js && node --check cli/main.js && node --check cli/project.js && node --check cli/npm.js && node --check cli/questions.js && node --check cli/config.js && node --check cli/dependencies.js && node --check cli/ui.js",
         "test": "node --test"
     },
