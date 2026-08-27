@@ -2,6 +2,40 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { getPackagePeerDependencies } from './npm.js'
 
+function findTemplateBlock(source) {
+    const templateTagPattern = /<\/?template\b[^>]*>/gi
+    let depth = 0
+    let start = -1
+    let openingTagEnd = -1
+    let match
+
+    while ((match = templateTagPattern.exec(source)) !== null) {
+        const isClosingTag = /^<\//.test(match[0])
+
+        if (!isClosingTag) {
+            if (depth === 0) {
+                start = match.index
+                openingTagEnd = templateTagPattern.lastIndex
+            }
+            depth += 1
+            continue
+        }
+
+        if (depth === 0) continue
+        depth -= 1
+
+        if (depth === 0) {
+            return {
+                start,
+                end: templateTagPattern.lastIndex,
+                content: source.slice(openingTagEnd, match.index)
+            }
+        }
+    }
+
+    return null
+}
+
 export async function addSideEffectImport({ targetDir, packageName }) {
     const mainFile = path.join(targetDir, 'src', 'main.ts')
     const source = await fs.readFile(mainFile, 'utf8')
@@ -79,14 +113,13 @@ export async function setupNsmpVueComponents({
     }
 
     if (!/<ConfigProvider(?:\s|>)/.test(source)) {
-        const templatePattern = /<template(?:\s[^>]*)?>([\s\S]*?)<\/template>/
-        const templateMatch = source.match(templatePattern)
+        const templateBlock = findTemplateBlock(source)
 
-        if (!templateMatch) {
+        if (!templateBlock) {
             throw new Error(`Не удалось настроить ${appFile}: не найден блок template`)
         }
 
-        const templateLines = templateMatch[1].split('\n')
+        const templateLines = templateBlock.content.split('\n')
         while (templateLines[0]?.trim() === '') templateLines.shift()
         while (templateLines.at(-1)?.trim() === '') templateLines.pop()
         const indentation = Math.min(...templateLines
@@ -96,7 +129,8 @@ export async function setupNsmpVueComponents({
             .map(line => line.trim() ? `    ${line.slice(indentation)}` : '')
             .join('\n')
 
-        source = source.replace(templatePattern, `<template>\n  <ConfigProvider>\n${wrappedContent}\n  </ConfigProvider>\n</template>`)
+        const wrappedTemplate = `<template>\n  <ConfigProvider>\n${wrappedContent}\n  </ConfigProvider>\n</template>`
+        source = `${source.slice(0, templateBlock.start)}${wrappedTemplate}${source.slice(templateBlock.end)}`
     }
 
     await fs.writeFile(appFile, source)

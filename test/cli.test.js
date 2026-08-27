@@ -152,6 +152,33 @@ test('setupNsmpVueComponents installs and registers required plugins', async t =
     )
 })
 
+test('setupNsmpVueComponents wraps the complete template with nested template blocks', async t => {
+    const targetDir = await fs.mkdtemp(path.join(os.tmpdir(), 'nsmp-components-'))
+    t.after(() => fs.rm(targetDir, { recursive: true, force: true }))
+    await fs.mkdir(path.join(targetDir, 'src'), { recursive: true })
+    await fs.writeFile(path.join(targetDir, 'package.json'), JSON.stringify({ dependencies: {} }))
+    await fs.writeFile(
+        path.join(targetDir, 'src', 'main.ts'),
+        "import { createApp } from 'vue'\nimport App from './App.vue'\n\nconst app = createApp(App)\n"
+    )
+    await fs.writeFile(
+        path.join(targetDir, 'src', 'App.vue'),
+        '<script setup lang="ts">\n</script>\n\n<template>\n  <Modal>\n    <template #footer>Footer</template>\n  </Modal>\n  <main>Content after nested template</main>\n</template>\n'
+    )
+
+    await setupNsmpVueComponents({
+        targetDir,
+        loadPeerDependencies: async () => ({})
+    })
+
+    const appSource = await fs.readFile(path.join(targetDir, 'src', 'App.vue'), 'utf8')
+    assert.match(
+        appSource,
+        /<ConfigProvider>[\s\S]*<template #footer>Footer<\/template>[\s\S]*<main>Content after nested template<\/main>[\s\S]*<\/ConfigProvider>/
+    )
+    assert.equal(appSource.match(/<\/template>/g).length, 2)
+})
+
 test('createProject copies and configures the template', async t => {
     const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'nsmp-cli-'))
     t.after(() => fs.rm(tempDir, { recursive: true, force: true }))
