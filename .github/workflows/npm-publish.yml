@@ -1,13 +1,12 @@
 name: Publish package to npm
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - package.json
-  workflow_dispatch:
-
+  workflow_run:
+    workflows:
+      - Sync template version
+    types:
+      - completed
+      
 permissions:
   contents: read
   id-token: write
@@ -15,11 +14,14 @@ permissions:
 jobs:
   verify:
     name: Verify package
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          ref: main
 
       - name: Set up Node.js
         uses: actions/setup-node@v5
@@ -42,11 +44,14 @@ jobs:
 
   test:
     name: Run tests
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          ref: main
 
       - name: Set up Node.js
         uses: actions/setup-node@v5
@@ -75,6 +80,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          ref: main
 
       - name: Set up Node.js
         uses: actions/setup-node@v5
