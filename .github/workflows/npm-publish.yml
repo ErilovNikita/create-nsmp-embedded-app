@@ -1,16 +1,31 @@
 name: Publish package to npm
 
 on:
-  workflow_call:
+  push:
+    branches:
+      - main
+    paths:
+      - package.json
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
 
+concurrency:
+  group: publish-package-main
+  cancel-in-progress: true
+
 jobs:
+  sync-template-version:
+    name: Sync template version
+    permissions:
+      contents: write
+    uses: ./.github/workflows/sync-template-version.yml
+
   verify:
     name: Verify package
+    needs: sync-template-version
     runs-on: ubuntu-latest
 
     steps:
@@ -40,6 +55,7 @@ jobs:
 
   test:
     name: Run tests
+    needs: sync-template-version
     runs-on: ubuntu-latest
 
     steps:

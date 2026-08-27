@@ -1,19 +1,10 @@
 name: Sync template version
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - package.json
+  workflow_call:
 
 permissions:
   contents: write
-  id-token: write
-
-concurrency:
-  group: sync-template-version-main
-  cancel-in-progress: true
 
 jobs:
   sync-version:
@@ -52,11 +43,3 @@ jobs:
           git add template/package.json template/package-lock.json
           git commit -m "chore(template): sync version to $TEMPLATE_VERSION [skip ci]"
           git push
-
-  publish-package:
-    name: Publish synchronized package
-    needs: sync-version
-    permissions:
-      contents: read
-      id-token: write
-    uses: ./.github/workflows/npm-publish.yml
