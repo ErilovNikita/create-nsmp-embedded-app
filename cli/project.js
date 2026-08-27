@@ -36,6 +36,24 @@ async function updateDocumentTitle(targetDir, projectName) {
     await fs.writeFile(indexHtmlPath, updatedHtml)
 }
 
+async function updateEnvLocal(targetDir, projectName) {
+    const envLocalPath = path.join(targetDir, '.env.local')
+    let envLocal = ''
+
+    try {
+        envLocal = await fs.readFile(envLocalPath, 'utf8')
+    } catch (error) {
+        if (error.code !== 'ENOENT') throw error
+    }
+
+    const appCode = `VITE_APP_CODE=${projectName}`
+    const updatedEnv = /^VITE_APP_CODE=.*$/m.test(envLocal)
+        ? envLocal.replace(/^VITE_APP_CODE=.*$/m, appCode)
+        : `${envLocal.trimEnd()}${envLocal.trim() ? '\n' : ''}${appCode}\n`
+
+    await fs.writeFile(envLocalPath, updatedEnv)
+}
+
 export async function createProject({
     templateDir,
     targetDir,
@@ -53,6 +71,7 @@ export async function createProject({
 
     await Promise.all([
         updatePackageJson(targetDir, projectName, dependencies),
-        updateDocumentTitle(targetDir, projectName)
+        updateDocumentTitle(targetDir, projectName),
+        updateEnvLocal(targetDir, projectName)
     ])
 }
