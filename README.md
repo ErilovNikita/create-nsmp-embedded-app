@@ -1,8 +1,7 @@
 # Create NSMP Embedded App
+> Интерактивный генератор embedded-приложений на Vue 3, TypeScript и Vite.
 
 [![npm version](https://img.shields.io/npm/v/create-nsmp-embedded-app?logo=npm)](https://www.npmjs.com/package/create-nsmp-embedded-app) [![npm downloads](https://img.shields.io/npm/dm/create-nsmp-embedded-app?logo=npm)](https://www.npmjs.com/package/create-nsmp-embedded-app) [![Workflow status](https://img.shields.io/github/actions/workflow/status/ErilovNikita/create-nsmp-embedded-app/npm-publish.yml?branch=main&logo=githubactions&label=build)](https://github.com/ErilovNikita/create-nsmp-embedded-app/actions/workflows/npm-publish.yml) [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A518-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-
-> Интерактивный генератор embedded-приложений на Vue 3, TypeScript и Vite.
 
 ```text
     _   _______ __  _______     ______          __             __    __         __   ___  by @minitwiks
@@ -71,7 +70,13 @@ npm run dev
 ### Сборка приложения
 До и после сборки нет необходимости что-то менять в коде встроенного приложения, во время сборки, замена всех переменных произойдет автоматически. Так же использование переменных окружения, не допустит попадения критичной информации в сборнный проект.
 
-### Разработка генератора
+## Утилиты
+
+| Утилита | Возможности | Документация |
+| --- | --- | --- |
+| `version` | Получение стабильных релизов GitHub и GitLab, сравнение SemVer, определение обновлений и формирование сообщений о версии | [Смотреть](docs/utils/version.md) |
+
+## Разработка генератора
 Для запуска шаблона из корня этого репозитория:
 
 ```bash

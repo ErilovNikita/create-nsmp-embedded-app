@@ -1,0 +1,51 @@
+name: Sync template version
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-template-version-main
+  cancel-in-progress: true
+
+jobs:
+  sync-version:
+    name: Sync version from root package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: Update template version
+        id: version
+        shell: bash
+        run: |
+          root_version="$(node --print "require('./package.json').version")"
+          npm --prefix template version "$root_version" --no-git-tag-version --allow-same-version
+          echo "value=$root_version" >> "$GITHUB_OUTPUT"
+
+      - name: Commit synchronized version
+        env:
+          TEMPLATE_VERSION: ${{ steps.version.outputs.value }}
+        shell: bash
+        run: |
+          if git diff --quiet -- template/package.json template/package-lock.json; then
+            echo "Template version is already synchronized."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add template/package.json template/package-lock.json
+          git commit -m "chore(template): sync version to $TEMPLATE_VERSION [skip ci]"
+          git push
