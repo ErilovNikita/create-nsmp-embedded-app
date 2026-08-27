@@ -2,12 +2,16 @@
 import { onMounted, ref } from 'vue'
 import User from './components/User.vue'
 import { goToUrl } from './services/utils.ts'
-  import { checkVersion, type VersionCheckResult } from './utils/version'
+import { checkVersion, type VersionCheckResult } from './utils/version'
 
 const version = ref<VersionCheckResult>()
 const versionError = ref<string>()
 
-onMounted(async () => {
+const getErrorMessage = (error: unknown): string => (
+  error instanceof Error ? error.message : String(error)
+)
+
+const checkAppVersion = async (): Promise<void> => {
   try {
     version.value = await checkVersion({
       service: 'github',
@@ -15,8 +19,12 @@ onMounted(async () => {
       repo: 'create-nsmp-embedded-app',
     })
   } catch (error) {
-    versionError.value = error instanceof Error ? error.message : String(error)
+    versionError.value = getErrorMessage(error)
   }
+}
+
+onMounted(() => {
+  void checkAppVersion()
 })
 </script>
 

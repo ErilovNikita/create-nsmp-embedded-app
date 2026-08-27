@@ -10,6 +10,7 @@ template/src/node_modules/
 template/.env.development
 !template/example.env
 **/dist/
+**/dist-zip/
 **/build/
 **/*.log
 **/.DS_Store
