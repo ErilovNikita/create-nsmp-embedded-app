@@ -31,9 +31,8 @@ onMounted(() => {
 <template>
   <div>
     <img src="/vite.svg" class="logo" alt="Vite logo" @click="goToUrl('https://vite.dev')" />
-    <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" @click="goToUrl('https://vuejs.org')" />
-    <img src="/typescript.png" class="logo typescript" alt="TypeScript logo"
-      @click="goToUrl('https://typescriptlang.org')" />
+    <img src="/vue.svg" class="logo vue" alt="Vue logo" @click="goToUrl('https://vuejs.org')" />
+    <img src="/typescript.png" class="logo typescript" alt="TypeScript logo" @click="goToUrl('https://typescriptlang.org')" />
   </div>
   <h1>Vite + Vue + TypeScript</h1>
 
