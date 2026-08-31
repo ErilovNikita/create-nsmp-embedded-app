@@ -52,6 +52,7 @@ npm run dev
 ## Документация
 
 Полное руководство по использованию шаблона, публикации в NSMP и доработке генератора находится в документации VitePress:
+
 <a href="docs/index.md">
 <img src="https://img.shields.io/badge/ОТКРЫТЬ_ДОКУМЕНТАЦИЮ-e8590c?style=for-the-badge&amp;logo=readthedocs&amp;logoColor=white" alt="Открыть документацию">
 </a>
