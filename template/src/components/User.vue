@@ -6,15 +6,27 @@ const userTitle = ref('')
 const userUrl = ref('')
 const errorMessage = ref('')
 
+const openUser = () => {
+  if (!userUrl.value) return
+  goToUrl(userUrl.value)
+}
+
 onMounted(async () => {
   try {
-    const currentUserUUID = jsApi.getCurrentUser().uuid
-    const url =`${jsApi.getAppRestBaseUrl()}/get/${currentUserUUID}?attrs=title`
+    const currentUser = jsApi.getCurrentUser()
+    const currentUserUUID = currentUser.uuid
 
-    const response = await jsApi.requests.json<{title?: string}>({url})
-    if ('title' in response) {
-      userTitle.value = `👋 Привет, ${response.title ?? ''}!`
-      userUrl.value = `${jsApi.getAppBaseUrl()}/operator/#uuid:${currentUserUUID}`
+    if (currentUserUUID === 'superUser') {
+      const currentUserLogin = currentUser.login
+      userTitle.value = `👋 Привет, ${currentUserLogin}!`
+    } else {
+      const url =`${jsApi.getAppRestBaseUrl()}/get/${currentUserUUID}?attrs=title`
+
+      const response = await jsApi.requests.json<{title?: string}>({url})
+      if ('title' in response) {
+        userTitle.value = `👋 Привет, ${response.title ?? ''}!`
+        userUrl.value = `${jsApi.getAppBaseUrl()}/operator/#uuid:${currentUserUUID}`
+      }
     }
 
   } catch (error: unknown) {
@@ -25,7 +37,12 @@ onMounted(async () => {
 
 <template>
   <div class="card">
-    <span v-if="userTitle" class="bloc" @click="goToUrl(userUrl)">{{ userTitle }}</span>
+    <span
+      v-if="userTitle"
+      class="bloc"
+      :class="{ link: userUrl }"
+      @click="openUser"
+    >{{ userTitle }}</span>
     <span v-if="errorMessage" class="bloc error">{{ errorMessage }}</span>
   </div>
 </template>
@@ -40,10 +57,12 @@ onMounted(async () => {
     font-family: inherit;
     background-color: #1a1a1a;
     color: #fff;
-    cursor: pointer;
     transition: 0.25s;
   }
-  .bloc:hover {
+  .link {
+    cursor: pointer;
+  }
+  .link:hover {
     transform: scale(1.05) !important;
   }
   .error {
