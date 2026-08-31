@@ -100,7 +100,7 @@ async function main() {
   const archivePath = path.resolve(
     rootDir,
     'dist-zip',
-    `${code}-${packageJson.version}.zip`
+    `${env.VITE_APP_CODE || packageJson.name}-${packageJson.version}.zip`
   )
   const endpoint = new URL('/sd/services/smpsync/ea', baseUrl)
   endpoint.searchParams.set('accessKey', accessKey)
