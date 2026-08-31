@@ -96,7 +96,7 @@ async function main() {
   )
   const baseUrl = required('NSMP_URL')
   const accessKey = required('NSMP_ACCESS_KEY')
-  const code = required('NSMP_APP_CODE', env.VITE_APP_CODE)
+  const code = required('NSMP_APP_CODE', env.VITE_APP_CODE || packageJson.name)
   const archivePath = path.resolve(
     rootDir,
     'dist-zip',

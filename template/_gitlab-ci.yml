@@ -1,0 +1,13 @@
+stages:
+  - deploy
+
+deploy_nsmp:
+  stage: deploy
+  image: node:24-alpine
+  resource_group: nsmp-deploy
+  interruptible: false
+  script:
+    - npm ci
+    - npm run release
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"

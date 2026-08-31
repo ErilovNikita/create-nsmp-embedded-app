@@ -54,15 +54,23 @@ async function updateEnvLocal(targetDir, projectName) {
     await fs.writeFile(envLocalPath, updatedEnv)
 }
 
-async function restoreGitignore(targetDir) {
-    const templatePath = path.join(targetDir, '_gitignore')
-    const targetPath = path.join(targetDir, '.gitignore')
+async function restoreTemplateFiles(targetDir) {
+    const mappings = [
+        ['_gitignore', '.gitignore'],
+        ['_github', '.github'],
+        ['_gitlab-ci.yml', '.gitlab-ci.yml']
+    ]
 
-    try {
-        await fs.rename(templatePath, targetPath)
-    } catch (error) {
-        if (error.code !== 'ENOENT') throw error
-    }
+    await Promise.all(mappings.map(async ([templateName, targetName]) => {
+        try {
+            await fs.rename(
+                path.join(targetDir, templateName),
+                path.join(targetDir, targetName)
+            )
+        } catch (error) {
+            if (error.code !== 'ENOENT') throw error
+        }
+    }))
 }
 
 export async function createProject({
@@ -84,6 +92,6 @@ export async function createProject({
         updatePackageJson(targetDir, projectName, dependencies),
         updateDocumentTitle(targetDir, projectName),
         updateEnvLocal(targetDir, projectName),
-        restoreGitignore(targetDir)
+        restoreTemplateFiles(targetDir)
     ])
 }
