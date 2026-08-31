@@ -1,0 +1,58 @@
+:root {
+  --vp-c-brand-1: #e8590c;
+  --vp-c-brand-2: #f76707;
+  --vp-c-brand-3: #fd7e14;
+  --vp-c-brand-soft: rgba(232, 89, 12, 0.14);
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #e8590c 20%, #fab005 80%);
+  --vp-home-hero-image-background-image: radial-gradient(circle, rgba(247, 103, 7, 0.3), transparent 65%);
+  --vp-home-hero-image-filter: blur(36px);
+}
+
+.dark {
+  --vp-c-brand-1: #ff922b;
+  --vp-c-brand-2: #fd7e14;
+  --vp-c-brand-3: #f76707;
+  --vp-c-brand-soft: rgba(255, 146, 43, 0.16);
+}
+
+.VPHomeHero .image-src {
+  width: 220px;
+  height: 220px;
+}
+
+.VPHomeHero .VPButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.VPHomeHero .VPButton::before {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  display: inline-block;
+  flex-shrink: 0;
+  background-color: currentColor;
+  content: '';
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
+
+.VPHomeHero .action:first-child .VPButton::before {
+  mask-image: url('/icons/book-open.svg');
+}
+
+.VPHomeHero .action:nth-child(2) .VPButton::before {
+  mask-image: url('/icons/upload-cloud.svg');
+}
+
+.VPFeature .box > img {
+  filter: invert(39%) sepia(96%) saturate(2372%) hue-rotate(357deg) brightness(94%) contrast(94%);
+}
+
+.vp-doc table {
+  display: table;
+  width: 100%;
+}

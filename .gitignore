@@ -11,6 +11,7 @@ build/
 .env.*
 !.env.example
 !.env.*.example
+!example.env.*
 
 # Logs and debug output
 *.log
@@ -23,6 +24,8 @@ pnpm-debug.log*
 coverage/
 .cache/
 .vite/
+docs/.vitepress/cache/
+docs/.vitepress/dist/
 
 # OS files
 .DS_Store
