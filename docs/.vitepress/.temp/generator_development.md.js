@@ -2,7 +2,7 @@ import { t as _plugin_vue_export_helper_default } from "./plugin-vue_export-help
 import { ssrRenderAttrs, ssrRenderStyle } from "vue/server-renderer";
 import { useSSRContext } from "vue";
 //#region docs/generator/development.md
-var __pageData = JSON.parse("{\"title\":\"Разработка генератора\",\"description\":\"\",\"frontmatter\":{},\"headers\":[],\"relativePath\":\"generator/development.md\",\"filePath\":\"generator/development.md\",\"lastUpdated\":0}");
+var __pageData = JSON.parse("{\"title\":\"Разработка генератора\",\"description\":\"\",\"frontmatter\":{},\"headers\":[],\"relativePath\":\"generator/development.md\",\"filePath\":\"generator/development.md\",\"lastUpdated\":1788173835000}");
 var _sfc_main = { name: "generator/development.md" };
 function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
 	_push(`<div${ssrRenderAttrs(_attrs)}><h1 id="разработка-генератора" tabindex="-1">Разработка генератора <a class="header-anchor" href="#разработка-генератора" aria-label="Permalink to “Разработка генератора”">​</a></h1><h2 id="подготовка" tabindex="-1">Подготовка <a class="header-anchor" href="#подготовка" aria-label="Permalink to “Подготовка”">​</a></h2><div class="language-bash"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="${ssrRenderStyle({

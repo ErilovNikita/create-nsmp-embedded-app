@@ -2,7 +2,7 @@ import { t as _plugin_vue_export_helper_default } from "./plugin-vue_export-help
 import { ssrRenderAttrs, ssrRenderStyle } from "vue/server-renderer";
 import { useSSRContext } from "vue";
 //#region docs/template/utils/version.md
-var __pageData = JSON.parse("{\"title\":\"Утилита проверки версии\",\"description\":\"\",\"frontmatter\":{},\"headers\":[],\"relativePath\":\"template/utils/version.md\",\"filePath\":\"template/utils/version.md\",\"lastUpdated\":0}");
+var __pageData = JSON.parse("{\"title\":\"Утилита проверки версии\",\"description\":\"\",\"frontmatter\":{},\"headers\":[],\"relativePath\":\"template/utils/version.md\",\"filePath\":\"template/utils/version.md\",\"lastUpdated\":1788173835000}");
 var _sfc_main = { name: "template/utils/version.md" };
 function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
 	_push(`<div${ssrRenderAttrs(_attrs)}><h1 id="утилита-проверки-версии" tabindex="-1">Утилита проверки версии <a class="header-anchor" href="#утилита-проверки-версии" aria-label="Permalink to “Утилита проверки версии”">​</a></h1><p><a href="./">Вернуться к списку утилит</a></p><p>Модуль <code>version</code> проверяет версию приложения по стабильным релизам публичного репозитория GitHub или GitLab. Все функции и типы импортируются через единую точку входа:</p><div class="language-ts"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">ts</span><pre class="shiki shiki-themes github-light github-dark" style="${ssrRenderStyle({

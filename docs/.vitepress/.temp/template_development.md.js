@@ -2,7 +2,7 @@ import { t as _plugin_vue_export_helper_default } from "./plugin-vue_export-help
 import { ssrRenderAttrs, ssrRenderStyle } from "vue/server-renderer";
 import { useSSRContext } from "vue";
 //#region docs/template/development.md
-var __pageData = JSON.parse("{\"title\":\"Локальная разработка\",\"description\":\"\",\"frontmatter\":{},\"headers\":[],\"relativePath\":\"template/development.md\",\"filePath\":\"template/development.md\",\"lastUpdated\":0}");
+var __pageData = JSON.parse("{\"title\":\"Локальная разработка\",\"description\":\"\",\"frontmatter\":{},\"headers\":[],\"relativePath\":\"template/development.md\",\"filePath\":\"template/development.md\",\"lastUpdated\":1788173835000}");
 var _sfc_main = { name: "template/development.md" };
 function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
 	_push(`<div${ssrRenderAttrs(_attrs)}><h1 id="локальная-разработка" tabindex="-1">Локальная разработка <a class="header-anchor" href="#локальная-разработка" aria-label="Permalink to “Локальная разработка”">​</a></h1><h2 id="запуск-сервера" tabindex="-1">Запуск сервера <a class="header-anchor" href="#запуск-сервера" aria-label="Permalink to “Запуск сервера”">​</a></h2><div class="language-bash"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="${ssrRenderStyle({

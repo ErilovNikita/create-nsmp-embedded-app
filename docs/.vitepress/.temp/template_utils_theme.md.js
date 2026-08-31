@@ -2,7 +2,7 @@ import { t as _plugin_vue_export_helper_default } from "./plugin-vue_export-help
 import { ssrRenderAttrs, ssrRenderStyle } from "vue/server-renderer";
 import { useSSRContext } from "vue";
 //#region docs/template/utils/theme.md
-var __pageData = JSON.parse("{\"title\":\"Утилита получения темы\",\"description\":\"\",\"frontmatter\":{},\"headers\":[],\"relativePath\":\"template/utils/theme.md\",\"filePath\":\"template/utils/theme.md\",\"lastUpdated\":0}");
+var __pageData = JSON.parse("{\"title\":\"Утилита получения темы\",\"description\":\"\",\"frontmatter\":{},\"headers\":[],\"relativePath\":\"template/utils/theme.md\",\"filePath\":\"template/utils/theme.md\",\"lastUpdated\":1788173835000}");
 var _sfc_main = { name: "template/utils/theme.md" };
 function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
 	_push(`<div${ssrRenderAttrs(_attrs)}><h1 id="утилита-получения-темы" tabindex="-1">Утилита получения темы <a class="header-anchor" href="#утилита-получения-темы" aria-label="Permalink to “Утилита получения темы”">​</a></h1><p><a href="./">Вернуться к списку утилит</a></p><p>Модуль <code>theme</code> получает строковое значение темы из NSMP через endpoint <code>GET /sd/jspresource?id=common&amp;method=theme&amp;theme=&lt;THEME_NAME&gt;</code>.</p><h2 id="использование" tabindex="-1">Использование <a class="header-anchor" href="#использование" aria-label="Permalink to “Использование”">​</a></h2><div class="language-ts"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">ts</span><pre class="shiki shiki-themes github-light github-dark" style="${ssrRenderStyle({

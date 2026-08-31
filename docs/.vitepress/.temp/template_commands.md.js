@@ -2,7 +2,7 @@ import { t as _plugin_vue_export_helper_default } from "./plugin-vue_export-help
 import { ssrRenderAttrs, ssrRenderStyle } from "vue/server-renderer";
 import { useSSRContext } from "vue";
 //#region docs/template/commands.md
-var __pageData = JSON.parse("{\"title\":\"Команды шаблона\",\"description\":\"\",\"frontmatter\":{},\"headers\":[],\"relativePath\":\"template/commands.md\",\"filePath\":\"template/commands.md\",\"lastUpdated\":0}");
+var __pageData = JSON.parse("{\"title\":\"Команды шаблона\",\"description\":\"\",\"frontmatter\":{},\"headers\":[],\"relativePath\":\"template/commands.md\",\"filePath\":\"template/commands.md\",\"lastUpdated\":1788173835000}");
 var _sfc_main = { name: "template/commands.md" };
 function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
 	_push(`<div${ssrRenderAttrs(_attrs)}><h1 id="команды-шаблона" tabindex="-1">Команды шаблона <a class="header-anchor" href="#команды-шаблона" aria-label="Permalink to “Команды шаблона”">​</a></h1><h2 id="создание-проекта" tabindex="-1">Создание проекта <a class="header-anchor" href="#создание-проекта" aria-label="Permalink to “Создание проекта”">​</a></h2><div class="language-bash"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="${ssrRenderStyle({

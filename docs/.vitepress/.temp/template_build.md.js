@@ -2,7 +2,7 @@ import { t as _plugin_vue_export_helper_default } from "./plugin-vue_export-help
 import { ssrRenderAttrs, ssrRenderStyle } from "vue/server-renderer";
 import { useSSRContext } from "vue";
 //#region docs/template/build.md
-var __pageData = JSON.parse("{\"title\":\"Сборка приложения\",\"description\":\"\",\"frontmatter\":{},\"headers\":[],\"relativePath\":\"template/build.md\",\"filePath\":\"template/build.md\",\"lastUpdated\":0}");
+var __pageData = JSON.parse("{\"title\":\"Сборка приложения\",\"description\":\"\",\"frontmatter\":{},\"headers\":[],\"relativePath\":\"template/build.md\",\"filePath\":\"template/build.md\",\"lastUpdated\":1788173835000}");
 var _sfc_main = { name: "template/build.md" };
 function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
 	_push(`<div${ssrRenderAttrs(_attrs)}><h1 id="сборка-приложения" tabindex="-1">Сборка приложения <a class="header-anchor" href="#сборка-приложения" aria-label="Permalink to “Сборка приложения”">​</a></h1><h2 id="production-сборка" tabindex="-1">Production-сборка <a class="header-anchor" href="#production-сборка" aria-label="Permalink to “Production-сборка”">​</a></h2><div class="language-bash"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="${ssrRenderStyle({

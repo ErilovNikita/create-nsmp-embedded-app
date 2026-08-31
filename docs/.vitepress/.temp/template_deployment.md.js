@@ -2,7 +2,7 @@ import { t as _plugin_vue_export_helper_default } from "./plugin-vue_export-help
 import { ssrRenderAttrs, ssrRenderStyle } from "vue/server-renderer";
 import { useSSRContext } from "vue";
 //#region docs/template/deployment.md
-var __pageData = JSON.parse("{\"title\":\"Публикация в NSMP\",\"description\":\"\",\"frontmatter\":{},\"headers\":[],\"relativePath\":\"template/deployment.md\",\"filePath\":\"template/deployment.md\",\"lastUpdated\":0}");
+var __pageData = JSON.parse("{\"title\":\"Публикация в NSMP\",\"description\":\"\",\"frontmatter\":{},\"headers\":[],\"relativePath\":\"template/deployment.md\",\"filePath\":\"template/deployment.md\",\"lastUpdated\":1788173835000}");
 var _sfc_main = { name: "template/deployment.md" };
 function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $options) {
 	_push(`<div${ssrRenderAttrs(_attrs)}><h1 id="публикация-в-nsmp" tabindex="-1">Публикация в NSMP <a class="header-anchor" href="#публикация-в-nsmp" aria-label="Permalink to “Публикация в NSMP”">​</a></h1><p>Публикация вынесена в отдельную команду и использует архив, уже созданный Vite.</p><h2 id="настроика" tabindex="-1">Настройка <a class="header-anchor" href="#настроика" aria-label="Permalink to “Настройка”">​</a></h2><div class="language-bash"><button title="Copy code" data-copied="Copied" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark" style="${ssrRenderStyle({
