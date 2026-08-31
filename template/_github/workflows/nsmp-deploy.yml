@@ -1,0 +1,38 @@
+name: Deploy to NSMP
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nsmp-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      NSMP_URL: ${{ secrets.NSMP_URL }}
+      NSMP_ACCESS_KEY: ${{ secrets.NSMP_ACCESS_KEY }}
+      NSMP_APP_CODE: ${{ vars.NSMP_APP_CODE }}
+      NSMP_APP_TITLE: ${{ vars.NSMP_APP_TITLE }}
+      NSMP_APP_MIN_HEIGHT: ${{ vars.NSMP_APP_MIN_HEIGHT }}
+      NSMP_APP_ENABLE: ${{ vars.NSMP_APP_ENABLE }}
+      NSMP_TLS_REJECT_UNAUTHORIZED: ${{ vars.NSMP_TLS_REJECT_UNAUTHORIZED }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and deploy
+        run: npm run release

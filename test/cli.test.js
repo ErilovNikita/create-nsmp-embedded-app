@@ -195,6 +195,13 @@ test('createProject copies and configures the template', async t => {
         path.join(sourceDir, '.env.local'),
         'VITE_APP_CODE=template\nVITE_CUSTOM_VALUE=preserved\n'
     )
+    await fs.writeFile(path.join(sourceDir, '_gitignore'), '.env.*\nnode_modules/\n')
+    await fs.mkdir(path.join(sourceDir, '_github', 'workflows'), { recursive: true })
+    await fs.writeFile(
+        path.join(sourceDir, '_github', 'workflows', 'nsmp-deploy.yml'),
+        'name: Deploy to NSMP\n'
+    )
+    await fs.writeFile(path.join(sourceDir, '_gitlab-ci.yml'), 'stages: [deploy]\n')
     await fs.writeFile(path.join(sourceDir, 'node_modules', 'ignored'), '')
 
     await createProject({
@@ -221,6 +228,21 @@ test('createProject copies and configures the template', async t => {
         await fs.readFile(path.join(targetDir, '.env.local'), 'utf8'),
         'VITE_APP_CODE=generated-app\nVITE_CUSTOM_VALUE=preserved\n'
     )
+    assert.equal(
+        await fs.readFile(path.join(targetDir, '.gitignore'), 'utf8'),
+        '.env.*\nnode_modules/\n'
+    )
+    await assert.rejects(fs.access(path.join(targetDir, '_gitignore')))
+    assert.equal(
+        await fs.readFile(path.join(targetDir, '.github', 'workflows', 'nsmp-deploy.yml'), 'utf8'),
+        'name: Deploy to NSMP\n'
+    )
+    assert.equal(
+        await fs.readFile(path.join(targetDir, '.gitlab-ci.yml'), 'utf8'),
+        'stages: [deploy]\n'
+    )
+    await assert.rejects(fs.access(path.join(targetDir, '_github')))
+    await assert.rejects(fs.access(path.join(targetDir, '_gitlab-ci.yml')))
     await assert.rejects(fs.access(path.join(targetDir, 'node_modules')))
 })
 

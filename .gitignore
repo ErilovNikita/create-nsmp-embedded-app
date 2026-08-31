@@ -11,6 +11,7 @@ build/
 .env.*
 !.env.example
 !.env.*.example
+!example.env.*
 
 # Logs and debug output
 *.log
