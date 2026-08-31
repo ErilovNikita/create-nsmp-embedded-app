@@ -34,8 +34,8 @@
 
 ## Быстрый старт
 
-> [!NOTE] Требования
-> Node.js 18+ и npm.
+> [!NOTE]
+> Требования: Node.js 18+ и npm.
 
 ```bash
 npm create nsmp-embedded-app@latest
