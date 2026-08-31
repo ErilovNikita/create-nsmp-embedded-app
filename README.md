@@ -110,8 +110,18 @@ npm run dev
 
 | Утилита | Возможности | Документация |
 | --- | --- | --- |
-| `version` | Получение стабильных релизов GitHub и GitLab, сравнение SemVer, определение обновлений и формирование сообщений о версии | [Смотреть](docs/utils/version.md) |
-| `theme` | Получение строкового значения темы через NSMP endpoint | [Смотреть](docs/utils/theme.md) |
+| `version` | Получение стабильных релизов GitHub и GitLab, сравнение SemVer, определение обновлений и формирование сообщений о версии | [Смотреть](docs/template/utils/version.md) |
+| `theme` | Получение строкового значения темы через NSMP endpoint | [Смотреть](docs/template/utils/theme.md) |
+
+## Документация
+
+Полная документация проекта построена на VitePress и находится в директории `docs/`.
+
+```bash
+npm run docs:dev      # локальная разработка
+npm run docs:build    # production-сборка
+npm run docs:preview  # просмотр production-сборки
+```
 
 ## Разработка генератора
 Для запуска шаблона из корня этого репозитория:

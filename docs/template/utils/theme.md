@@ -1,6 +1,6 @@
 # Утилита получения темы
 
-[Вернуться к списку утилит](../../README.md#утилиты)
+[Вернуться к списку утилит](./)
 
 Модуль `theme` получает строковое значение темы из NSMP через endpoint
 `GET /sd/jspresource?id=common&method=theme&theme=<THEME_NAME>`.
