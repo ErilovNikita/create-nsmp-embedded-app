@@ -4,6 +4,7 @@ export default defineConfig({
   lang: 'ru-RU',
   title: 'Create NSMP Embedded App',
   description: 'Генератор встроенных приложений NSMP на Vue, TypeScript и Vite',
+  base: '/create-nsmp-embedded-app/',
   cleanUrls: true,
   lastUpdated: true,
   head: [

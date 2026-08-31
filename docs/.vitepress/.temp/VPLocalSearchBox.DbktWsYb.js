@@ -7,7 +7,7 @@ import { useFocusTrap } from "@vueuse/integrations/useFocusTrap";
 import Mark from "mark.js/src/vanilla.js";
 import MiniSearch from "minisearch";
 //#region ../../../../../../@localSearchIndex
-var _localSearchIndex_default = { "root": () => import("./@localSearchIndexroot.u0-S35Zd.js") };
+var _localSearchIndex_default = { "root": () => import("./@localSearchIndexroot.Dv5hy-tl.js") };
 //#endregion
 //#region node_modules/vitepress/dist/client/theme-default/support/lru.js
 var LRUCache = class {

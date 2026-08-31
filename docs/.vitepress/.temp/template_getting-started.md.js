@@ -79,7 +79,7 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs, $props, $setup, $data, $op
 	})}"> run</span><span style="${ssrRenderStyle({
 		"--shiki-light": "#032F62",
 		"--shiki-dark": "#9ECBFF"
-	})}"> build</span></span></code></pre></div><p>Готовое приложение появится в <code>dist/</code>, а архив для NSMP — в <code>dist-zip/</code>.</p><div class="tip custom-block"><p class="custom-block-title">Следующий шаг</p><p>Разберитесь, <a href="/template/environment">какие ENV-переменные нужны приложению</a>, или сразу настройте <a href="/template/deployment">публикацию в NSMP</a>.</p></div></div>`);
+	})}"> build</span></span></code></pre></div><p>Готовое приложение появится в <code>dist/</code>, а архив для NSMP — в <code>dist-zip/</code>.</p><div class="tip custom-block"><p class="custom-block-title">Следующий шаг</p><p>Разберитесь, <a href="/create-nsmp-embedded-app/template/environment">какие ENV-переменные нужны приложению</a>, или сразу настройте <a href="/create-nsmp-embedded-app/template/deployment">публикацию в NSMP</a>.</p></div></div>`);
 }
 var _sfc_setup = _sfc_main.setup;
 _sfc_main.setup = (props, ctx) => {
