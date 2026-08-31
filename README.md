@@ -51,9 +51,32 @@ npm create nsmp-embedded-app@latest my-nsmp-app
 ```bash
 npm run dev       # запуск dev-сервера
 npm run build     # проверка типов и production-сборка
+npm run deploy    # загрузка готового ZIP на инсталляцию NSMP
+npm run release   # сборка и последующая загрузка на инсталляцию
 ```
 
 Во время сборки `vite-plugin-zip-pack` создаёт ZIP-архив приложения. Его имя формируется из `VITE_APP_CODE` и версии проекта.
+
+### Публикация в NSMP
+Скопируйте `example.env.deploy` в `.env.deploy.local` и укажите URL инсталляции и ключ доступа. Файл `.env.deploy.local` игнорируется Git и не должен попадать в репозиторий.
+
+```bash
+cp example.env.deploy .env.deploy.local
+```
+
+```dotenv
+NSMP_URL=https://support.example.ru
+NSMP_ACCESS_KEY=secret
+NSMP_APP_TITLE=Моё встроенное приложение
+```
+
+После этого соберите и опубликуйте приложение одной командой:
+
+```bash
+npm run release
+```
+
+Для загрузки уже собранного архива используйте `npm run deploy`. Команда автоматически берёт архив `dist-zip/<VITE_APP_CODE>-<version>.zip`.
 
 ## Испрользование
 ### Режим разработки

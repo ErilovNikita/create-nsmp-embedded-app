@@ -195,6 +195,7 @@ test('createProject copies and configures the template', async t => {
         path.join(sourceDir, '.env.local'),
         'VITE_APP_CODE=template\nVITE_CUSTOM_VALUE=preserved\n'
     )
+    await fs.writeFile(path.join(sourceDir, '_gitignore'), '.env.*\nnode_modules/\n')
     await fs.writeFile(path.join(sourceDir, 'node_modules', 'ignored'), '')
 
     await createProject({
@@ -221,6 +222,11 @@ test('createProject copies and configures the template', async t => {
         await fs.readFile(path.join(targetDir, '.env.local'), 'utf8'),
         'VITE_APP_CODE=generated-app\nVITE_CUSTOM_VALUE=preserved\n'
     )
+    assert.equal(
+        await fs.readFile(path.join(targetDir, '.gitignore'), 'utf8'),
+        '.env.*\nnode_modules/\n'
+    )
+    await assert.rejects(fs.access(path.join(targetDir, '_gitignore')))
     await assert.rejects(fs.access(path.join(targetDir, 'node_modules')))
 })
 

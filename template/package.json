@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --mode development",
-    "build": "vue-tsc -b && vite build"
+    "build": "vue-tsc -b && vite build",
+    "deploy": "node scripts/deploy.js",
+    "release": "npm run build && npm run deploy"
   },
   "dependencies": {
     "@minitwiks/js-api": "^2.0.0",
