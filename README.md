@@ -59,7 +59,7 @@ npm run dev
 
 Для локального запуска документации:
 
-```npm
+```bash
 npm install
 npm run docs:dev
 ```
