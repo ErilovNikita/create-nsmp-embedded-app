@@ -1,7 +1,12 @@
 # Create NSMP Embedded App
-> Интерактивный генератор embedded-приложений на Vue 3, TypeScript и Vite.
 
-[![npm version](https://img.shields.io/npm/v/create-nsmp-embedded-app?logo=npm)](https://www.npmjs.com/package/create-nsmp-embedded-app) [![npm downloads](https://img.shields.io/npm/dm/create-nsmp-embedded-app?logo=npm)](https://www.npmjs.com/package/create-nsmp-embedded-app) [![Workflow status](https://img.shields.io/github/actions/workflow/status/ErilovNikita/create-nsmp-embedded-app/npm-publish.yml?branch=main&logo=githubactions&label=build)](https://github.com/ErilovNikita/create-nsmp-embedded-app/actions/workflows/npm-publish.yml) [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A518-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+> Интерактивный генератор embedded-приложений NSMP на Vue 3, TypeScript и Vite.
+
+[![npm version](https://img.shields.io/npm/v/create-nsmp-embedded-app?logo=npm)](https://www.npmjs.com/package/create-nsmp-embedded-app)
+[![npm downloads](https://img.shields.io/npm/dm/create-nsmp-embedded-app?logo=npm)](https://www.npmjs.com/package/create-nsmp-embedded-app)
+[![Workflow status](https://img.shields.io/github/actions/workflow/status/ErilovNikita/create-nsmp-embedded-app/npm-publish.yml?branch=main&logo=githubactions&label=build)](https://github.com/ErilovNikita/create-nsmp-embedded-app/actions/workflows/npm-publish.yml)
+[![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A518-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 ```text
     _   _______ __  _______     ______          __             __    __         __   ___  by @minitwiks
@@ -12,144 +17,64 @@
                                                                                        /_/   /_/
 ```
 
-<!-- ![Simple Application](docs/base.png) -->
-
 Создайте новый NSMP Embedded App одной командой. CLI задаст необходимые вопросы прямо в терминале, скопирует готовый шаблон и при необходимости установит зависимости.
 
 > [!NOTE]
 > Данный шаблон использует [собственную ветку](https://github.com/ErilovNikita/js-api) библиотеки `js-api`.
 
 ## Возможности
-- Интерактивное создание проекта
-- Vue 3 + TypeScript + Vite
-- Готовая структура для NSMP embedded-приложения
-- Проксирование запросов NSMP через Vite
-- Сборка приложения и ZIP-архива
-- Автоматическая установка npm-зависимостей
+
+- готовый шаблон на Vue 3, TypeScript и Vite;
+- локальная разработка с проксированием запросов NSMP;
+- типизированный mock-слой `jsApi`;
+- автоматическая сборка ZIP-архива;
+- публикация приложения через ENV-конфигурацию;
+- ручные workflow для GitHub Actions и GitLab CI;
+- подключение дополнительных пакетов через интерактивный CLI.
 
 ## Быстрый старт
-Требования: Node.js 18+ и npm.
+
+> [!NOTE]
+> Требования: Node.js 18+ и npm.
 
 ```bash
 npm create nsmp-embedded-app@latest
 ```
 
-CLI предложит:
-1. Имя проекта в формате `lowercase-with-dashes`;
-2. Установить ли зависимости автоматически
-
-Также имя можно передать первым аргументом:
-```bash
-npm create nsmp-embedded-app@latest my-nsmp-app
-```
-
-## Настройка окружения
-Откройте `.env.development` и замените значения-заглушки на реальные:
-Не добавляйте `.env.development` и другие локальные env-файлы в репозиторий.
-
-## Команды шаблона
-```bash
-npm run dev       # запуск dev-сервера
-npm run build     # проверка типов и production-сборка
-npm run deploy    # загрузка готового ZIP на инсталляцию NSMP
-npm run release   # сборка и последующая загрузка на инсталляцию
-```
-
-Во время сборки `vite-plugin-zip-pack` создаёт ZIP-архив приложения. Его имя формируется из `VITE_APP_CODE` и версии проекта.
-
-### Публикация в NSMP
-Скопируйте `example.env.deploy` в `.env.deploy.local` и укажите URL инсталляции и ключ доступа. Файл `.env.deploy.local` игнорируется Git и не должен попадать в репозиторий.
+Затем:
 
 ```bash
-cp example.env.deploy .env.deploy.local
-```
-
-```dotenv
-NSMP_URL=https://support.example.ru
-NSMP_ACCESS_KEY=secret
-NSMP_APP_TITLE=Моё встроенное приложение
-```
-
-После этого соберите и опубликуйте приложение одной командой:
-
-```bash
-npm run release
-```
-
-Для загрузки уже собранного архива используйте `npm run deploy`. Команда автоматически берёт архив `dist-zip/<VITE_APP_CODE>-<version>.zip`.
-
-### Автоматическая публикация
-
-Созданный проект содержит готовые конфигурации для GitHub Actions и GitLab CI. Публикация запускается только вручную: через `Run workflow` в GitHub Actions или `Run pipeline` в GitLab. Обычный push не публикует приложение в NSMP.
-
-В настройках CI добавьте два защищённых секрета:
-
-- `NSMP_URL` — URL инсталляции без пути `/sd`;
-- `NSMP_ACCESS_KEY` — ключ доступа к инсталляции.
-
-Остальные параметры необязательны и задаются как GitHub Actions Variables или GitLab CI/CD Variables: `NSMP_APP_CODE`, `NSMP_APP_TITLE`, `NSMP_APP_MIN_HEIGHT`, `NSMP_APP_ENABLE`, `NSMP_TLS_REJECT_UNAUTHORIZED`. Если `NSMP_APP_CODE` не указан, используется имя пакета из `package.json`.
-
-Если инсталляция доступна только из внутренней сети, используйте self-hosted GitHub runner или GitLab runner с доступом к ней.
-
-## Испрользование
-### Режим разработки
-В этом режиме появляется возможность запуска приложения вне сервиса NSMP, для разработки или отладки.
-
-### Настройка
-Для корректной работы в этом режиме необходимо создать файл `.env.development` и заполнить данные по примеру из файла `example.env`
-
-### Запуск
-```sh
+cd my-nsmp-app
+cp example.env .env.development
 npm run dev
 ```
 
-### Сборка приложения
-До и после сборки нет необходимости что-то менять в коде встроенного приложения, во время сборки, замена всех переменных произойдет автоматически. Так же использование переменных окружения, не допустит попадения критичной информации в сборнный проект.
+## Документация
 
-## Утилиты
+Полное руководство по использованию шаблона, публикации в NSMP и доработке генератора находится в документации VitePress:
 
-| Утилита | Возможности | Документация |
-| --- | --- | --- |
-| `version` | Получение стабильных релизов GitHub и GitLab, сравнение SemVer, определение обновлений и формирование сообщений о версии | [Смотреть](docs/utils/version.md) |
-| `theme` | Получение строкового значения темы через NSMP endpoint | [Смотреть](docs/utils/theme.md) |
+<a href="docs/index.md">
+<img src="https://img.shields.io/badge/ОТКРЫТЬ_ДОКУМЕНТАЦИЮ-e8590c?style=for-the-badge&amp;logo=readthedocs&amp;logoColor=white" alt="Открыть документацию">
+</a>
 
-## Разработка генератора
-Для запуска шаблона из корня этого репозитория:
+Для локального запуска документации:
+
+```bash
+npm install
+npm run docs:dev
+```
+
+## Разработка
 
 ```bash
 npm install
 npm --prefix template install
-npm run dev
-npm run build
-```
-
-Чтобы предложить пользователю дополнительную npm-зависимость, добавьте её имя в
-массив `optionalDependencies` в `cli/config.js`:
-
-```js
-export const optionalDependencies = [
-    'nsmp-icons',
-    {
-        name: '@scope/package',
-        version: '1.2.3',
-        callback: async ({ targetDir, projectName, packageName, version }) => {
-            // Дополнительная настройка созданного проекта.
-        }
-    }
-]
-```
-
-Строковая запись добавляет актуальную версию с префиксом `^`. Поле `version`
-записывается как есть: можно указать точную версию (`1.2.3`) или npm-диапазон
-(`~1.2.3`, `^1.2.3`). Для каждого пакета CLI автоматически создаст отдельный
-вопрос и добавит выбранную зависимость в `package.json` нового проекта. Если
-указан `callback`, он выполнится только для выбранной зависимости — после
-создания проекта, но до запуска `npm install`. Callback может быть асинхронным.
-
-После изменения CLI проверьте его синтаксис:
-```bash
 npm run check
+npm test
+npm run build
+npm run docs:build
 ```
 
 ## Лицензия
+
 Проект распространяется под лицензией [MIT](LICENSE).

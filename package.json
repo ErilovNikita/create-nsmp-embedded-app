@@ -27,10 +27,16 @@
     "scripts": {
         "dev": "npm --prefix template run dev --",
         "build": "npm --prefix template run build",
+        "docs:dev": "vitepress dev docs",
+        "docs:build": "vitepress build docs",
+        "docs:preview": "vitepress preview docs",
         "check": "node --check cli/index.js && node --check cli/main.js && node --check cli/project.js && node --check cli/npm.js && node --check cli/questions.js && node --check cli/config.js && node --check cli/dependencies.js && node --check cli/ui.js",
         "test": "node --test"
     },
     "dependencies": {
         "prompts": "^2.4.2"
+    },
+    "devDependencies": {
+        "vitepress": "^2.0.0-alpha.19"
     }
 }
