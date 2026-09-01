@@ -59,7 +59,8 @@ export default defineConfig({
           items: [
             { text: 'Утилиты шаблона', link: '/template/utils/' },
             { text: 'Version', link: '/template/utils/version' },
-            { text: 'Theme', link: '/template/utils/theme' }
+            { text: 'Theme', link: '/template/utils/theme' },
+            { text: 'Platform', link: '/template/utils/platform' }
           ]
         },
         {
