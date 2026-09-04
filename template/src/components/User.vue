@@ -16,7 +16,7 @@ onMounted(async () => {
     const currentUser = jsApi.getCurrentUser()
     const currentUserUUID = currentUser.uuid
 
-    if (currentUserUUID === 'superUser') {
+    if (currentUserUUID.indexOf('superUser') != -1) {
       const currentUserLogin = currentUser.login
       userTitle.value = `👋 Привет, ${currentUserLogin}!`
     } else {
