@@ -20,13 +20,12 @@ export class GwtDispatchError extends Error {
   }
 }
 
-/**
- * Формирует сериализованный GWT-RPC payload для запроса персональных настроек.
- */
-export const buildPersonalSettingsPayload = (
+/** Формирует сериализованный GWT-RPC payload для указанного action. */
+export const buildDispatchPayload = (
   moduleBase: string,
   policyHash: string,
   actionSignature: string,
+  action: string,
   userUuid: string,
 ): string => {
   const strings = [
@@ -35,7 +34,7 @@ export const buildPersonalSettingsPayload = (
     GWT_SERVICE,
     'execute',
     GWT_ACTION_INTERFACE,
-    `${PERSONAL_SETTINGS_ACTION}/${actionSignature}`,
+    `${action}/${actionSignature}`,
     userUuid,
   ]
   return ['7', '0', '7', ...strings, '1', '2', '3', '4', '1', '5', '6', '7', ''].join('|')

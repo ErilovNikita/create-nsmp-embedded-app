@@ -61,6 +61,7 @@ export default defineConfig({
             { text: 'Environment', link: '/template/utils/environment' },
             { text: 'Version', link: '/template/utils/version' },
             { text: 'Theme', link: '/template/utils/theme' },
+            { text: 'Dispatch', link: '/template/utils/dispatch' },
             { text: 'Platform', link: '/template/utils/platform' }
           ]
         },

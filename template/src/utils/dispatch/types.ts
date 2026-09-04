@@ -16,8 +16,8 @@ export interface PersonalSettings {
   useUserQATiles: boolean | null
 }
 
-/** Параметры подключения клиента к GWT Dispatch NSMP. */
-export interface GwtPersonalSettingsClientOptions {
+/** Параметры подключения к GWT Dispatch NSMP. */
+export interface DispatchOptions {
   /** Policy hash GWT-сборки. Если не указан, загружается автоматически. */
   policyHash?: string
   /** Числовая сигнатура GWT action. Если не указана, извлекается из policy. */
