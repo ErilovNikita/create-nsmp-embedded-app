@@ -35,6 +35,19 @@ export const getThemeConfigurationByCode = async (themeCode: string): Promise<st
 }
 
 /** Получает код темы операторского интерфейса текущего пользователя. */
-export const getCurrentUserTheme = async (userUuid: string): Promise<string | null> => (
-  (await new Dispatch().getPersonalSettings(userUuid)).themeOperator
-)
+export const getCurrentUserTheme = async (userUuid: string): Promise<string> => {
+  const dispatch = new Dispatch()
+  const themeCode = (await dispatch.getPersonalSettings(userUuid)).themeOperator
+
+  if (themeCode !== 'system#default') {
+    if (themeCode) return themeCode
+    throw new ThemeError('Персональная тема пользователя не задана')
+  }
+
+  const defaultTheme = (await dispatch.getAllPersonalSettings()).themes
+    .find(theme => theme.operatorTheme)?.code
+
+  if (!defaultTheme) throw new ThemeError('Не удалось определить тему оператора по умолчанию')
+  return defaultTheme
+}
+

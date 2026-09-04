@@ -1,12 +1,12 @@
 import {
-  buildDispatchPayload,
+  buildDispatch,
   decodePersonalSettings,
+  decodeAllPersonalSettings,
   GwtDispatchError,
   PERSONAL_SETTINGS_ACTION,
+  ALL_PERSONAL_SETTINGS_ACTION
 } from './protocol'
-import type { BuildInfo, DispatchOptions, PersonalSettings } from './types'
-
-const USER_UUID_PATTERN = /^[A-Za-z][\w-]*\$[\w-]+$/
+import type { AllPersonalSettings, BuildInfo, DispatchOptions, PersonalSettings } from './types'
 
 /** Загружает текстовый ресурс текущей NSMP-сессии. */
 const fetchText = async (url: string): Promise<string> => {
@@ -72,11 +72,8 @@ export class Dispatch {
   constructor(private readonly options: DispatchOptions = {}) {}
 
   /** Выполняет GWT Dispatch action и возвращает необработанное тело ответа. */
-  async dispatch(action: string, userUuid: string, actionSignature?: string): Promise<string> {
+  async dispatch(action: string, payload?: string, actionSignature?: string): Promise<string> {
     if (!action.trim()) throw new TypeError('Имя Dispatch action не должно быть пустым')
-    if (!USER_UUID_PATTERN.test(userUuid)) {
-      throw new TypeError(`Некорректный UUID пользователя: ${userUuid}`)
-    }
 
     const moduleBase = new URL(
       this.options.modulePath ?? '/sd/admin/',
@@ -95,12 +92,12 @@ export class Dispatch {
         'X-GWT-Permutation': this.options.permutation ?? build.policyHash,
         'X-CSRF-TOKEN': csrfToken,
       },
-      body: buildDispatchPayload(
+      body: buildDispatch(
         moduleBase,
         build.policyHash,
         build.actionSignature,
         action,
-        userUuid,
+        payload,
       ),
     })
 
@@ -111,9 +108,14 @@ export class Dispatch {
     return body
   }
 
-  /** Получает персональные настройки как один из поддерживаемых Dispatch action. */
+  /** Получает персональные настройки пользователя. */
   async getPersonalSettings(userUuid: string): Promise<PersonalSettings> {
     return decodePersonalSettings(await this.dispatch(PERSONAL_SETTINGS_ACTION, userUuid))
+  }
+
+  /** Получает все персональные настройки. */
+  async getAllPersonalSettings(): Promise<AllPersonalSettings> {
+    return decodeAllPersonalSettings(await this.dispatch(ALL_PERSONAL_SETTINGS_ACTION))
   }
 
   /** Загружает данные GWT-сборки один раз и кеширует выполняющийся Promise. */

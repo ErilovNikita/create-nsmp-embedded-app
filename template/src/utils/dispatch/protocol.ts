@@ -1,10 +1,15 @@
-import type { PersonalSettings } from './types'
+import type { AllPersonalSettings, PersonalSettings, ThemeClient } from './types'
 
 const GWT_SERVICE = 'net.customware.gwt.dispatch.shared.standard.StandardDispatchService'
 const GWT_ACTION_INTERFACE = 'net.customware.gwt.dispatch.shared.Action'
-export const PERSONAL_SETTINGS_ACTION = 'ru.naumen.core.shared.dispatch.GetUserPersonalSettingsAction'
 const PERSONAL_SETTINGS_RESPONSE = 'ru.naumen.core.shared.dispatch.GetUserPersonalSettingsResponse'
 const PERSONAL_SETTINGS_DTO = 'ru.naumen.core.shared.personalsettings.PersonalSettingsDTO'
+const ALL_PERSONAL_SETTINGS_RESPONSE = 'ru.naumen.core.shared.dispatch.GetAllPersonalSettingsResponse'
+const THEME_CLIENT = 'ru.naumen.core.shared.personalsettings.ThemeClient'
+const CHANGE_TRACKING_SETTINGS = 'ru.naumen.metainfo.shared.changetracking.ChangeTrackingSettings'
+
+export const PERSONAL_SETTINGS_ACTION = 'ru.naumen.core.shared.dispatch.GetUserPersonalSettingsAction'
+export const ALL_PERSONAL_SETTINGS_ACTION = 'ru.naumen.core.shared.dispatch.GetAllPersonalSettingsAction'
 
 /** Ошибка HTTP-запроса или обработки протокола GWT Dispatch. */
 export class GwtDispatchError extends Error {
@@ -21,12 +26,12 @@ export class GwtDispatchError extends Error {
 }
 
 /** Формирует сериализованный GWT-RPC payload для указанного action. */
-export const buildDispatchPayload = (
+export const buildDispatch = (
   moduleBase: string,
   policyHash: string,
   actionSignature: string,
   action: string,
-  userUuid: string,
+  payload?: string,
 ): string => {
   const strings = [
     moduleBase,
@@ -35,9 +40,14 @@ export const buildDispatchPayload = (
     'execute',
     GWT_ACTION_INTERFACE,
     `${action}/${actionSignature}`,
-    userUuid,
   ]
-  return ['7', '0', '7', ...strings, '1', '2', '3', '4', '1', '5', '6', '7', ''].join('|')
+  if (payload !== undefined) strings.push(payload)
+
+  const stringCount = strings.length.toString()
+  const serializedValues = payload === undefined
+    ? ['1', '2', '3', '4', '1', '5', '6']
+    : ['1', '2', '3', '4', '1', '5', '6', '7']
+  return [stringCount, '0', stringCount, ...strings, ...serializedValues, ''].join('|')
 }
 
 /** Читает значения GWT-RPC в обратном порядке и разрешает ссылки на объекты. */
@@ -79,6 +89,26 @@ class GwtReader {
     return this.integer() === 1
   }
 
+  /** Читает примитивное списочное значение GWT. */
+  list<T>(readItem: () => T): T[] {
+    this.expectType('java.util.ArrayList')
+    const size = this.integer()
+    const result: T[] = []
+    for (let index = 0; index < size; index += 1) result.push(readItem())
+    return result
+  }
+
+  /** Читает примитивное объектное значение GWT. */
+  object<T>(expected: string, readValue: () => T): T | null {
+    const token = this.integer()
+    if (token === 0) return null
+    if (token < 0) return this.reference(token, 'object') as T
+    this.expectTokenType(token, expected)
+    const value = readValue()
+    this.addReference(value)
+    return value
+  }
+
   /** Читает nullable-значение `java.lang.Boolean` или ссылку на него. */
   boxedBoolean(): boolean | null {
     const token = this.integer()
@@ -109,7 +139,7 @@ class GwtReader {
   }
 
   /** Разрешает отрицательный GWT-токен в ранее прочитанное значение указанного типа. */
-  private reference(token: number, type: 'boolean' | 'number'): unknown {
+  private reference(token: number, type: 'boolean' | 'number' | 'object'): unknown {
     const value = this.references[-token - 1]
     if (typeof value !== type) throw new GwtDispatchError('Некорректная GWT-ссылка')
     return value
@@ -124,19 +154,10 @@ class GwtReader {
   }
 }
 
+
 /** Декодирует успешный ответ GWT Dispatch в персональные настройки пользователя. */
 export const decodePersonalSettings = (body: string): PersonalSettings => {
-  let packet: unknown
-  try {
-    packet = JSON.parse(body.slice(4))
-  } catch {
-    throw new GwtDispatchError('Некорректный JSON в GWT-ответе', body)
-  }
-  if (!Array.isArray(packet) || !Array.isArray(packet.at(-3))) {
-    throw new GwtDispatchError('Некорректный GWT-ответ', body)
-  }
-
-  const reader = new GwtReader(packet.slice(0, -3), packet.at(-3) as string[])
+  const reader = createReader(body)
   reader.expectType(PERSONAL_SETTINGS_RESPONSE)
   reader.addReference({})
   reader.expectType(PERSONAL_SETTINGS_DTO)
@@ -158,4 +179,44 @@ export const decodePersonalSettings = (body: string): PersonalSettings => {
   result.useAdvancedSearch = reader.boxedBoolean()
   result.useUserQATiles = reader.boxedBoolean()
   return result
+}
+
+/** Декодирует список тем и глобальные настройки из GetAllPersonalSettingsResponse. */
+export const decodeAllPersonalSettings = (body: string): AllPersonalSettings => {
+  const reader = createReader(body)
+  reader.expectType(ALL_PERSONAL_SETTINGS_RESPONSE)
+  reader.addReference({})
+
+  const themes = reader.list(() => reader.object(THEME_CLIENT, () => ({
+    adminTheme: reader.boolean(),
+    displayedInAdminMode: reader.boolean(),
+    enabled: reader.boolean(),
+    image: reader.string(),
+    logoFile: reader.object('ru.naumen.core.shared.dto.SimpleDtObject', () => ({})),
+    logoLoginFile: reader.object('ru.naumen.core.shared.dto.SimpleDtObject', () => ({})),
+    operatorTheme: reader.boolean(),
+    paramsFile: reader.object('ru.naumen.core.shared.dto.SimpleDtObject', () => ({})),
+    system: reader.boolean(),
+    code: reader.string() ?? '',
+    title: reader.string(),
+  }) as ThemeClient)).filter((theme): theme is ThemeClient => theme !== null)
+
+  const changeTrackingSettings = reader.object(CHANGE_TRACKING_SETTINGS, () => ({
+    objectChangeTrackingEnabled: reader.boolean(),
+  }))
+
+  return { themes, changeTrackingSettings }
+}
+
+function createReader(body: string): GwtReader {
+  let packet: unknown
+  try {
+    packet = JSON.parse(body.slice(4))
+  } catch {
+    throw new GwtDispatchError('Некорректный JSON в GWT-ответе', body)
+  }
+  if (!Array.isArray(packet) || !Array.isArray(packet.at(-3))) {
+    throw new GwtDispatchError('Некорректный GWT-ответ', body)
+  }
+  return new GwtReader(packet.slice(0, -3), packet.at(-3) as string[])
 }

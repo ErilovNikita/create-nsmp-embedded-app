@@ -16,6 +16,28 @@ export interface PersonalSettings {
   useUserQATiles: boolean | null
 }
 
+/** Тема из GetAllPersonalSettingsResponse. */
+export interface ThemeClient {
+  code: string
+  title: string | null
+  displayedInAdminMode: boolean
+  system: boolean
+  enabled: boolean
+  operatorTheme: boolean
+  adminTheme: boolean
+  image: string | null
+  paramsFile: unknown | null
+  logoFile: unknown | null
+  logoLoginFile: unknown | null
+}
+
+/** Ответ GetAllPersonalSettingsAction. */
+export interface AllPersonalSettings {
+  themes: ThemeClient[]
+  changeTrackingSettings: unknown
+}
+
+
 /** Параметры подключения к GWT Dispatch NSMP. */
 export interface DispatchOptions {
   /** Policy hash GWT-сборки. Если не указан, загружается автоматически. */
