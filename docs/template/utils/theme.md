@@ -2,36 +2,53 @@
 
 [Вернуться к списку утилит](./)
 
-Модуль `theme` получает строковое значение темы из NSMP через endpoint
-`GET /sd/jspresource?id=common&method=theme&theme=<THEME_NAME>`.
+Модуль `theme` отвечает за работу с темой пользователя: получает код темы
+текущего пользователя и загружает строковую конфигурацию NSMP по этому коду
+через endpoint `/sd/jspresource`.
 
-## Использование
+## Получение темы текущего пользователя
 
-```ts
-import { getTheme } from './utils/theme'
-
-const theme = await getTheme('dark')
-
-console.log(theme)
-```
-
-Имя темы автоматически кодируется перед добавлением в URL. Метод возвращает
-тело ответа сервера без преобразований в виде `Promise<string>`.
-
-## Обработка ошибок
+::: tip
+При получении темы текущего пользователя всегда возвращается настоящий код
+темы. Если в персональных настройках указано значение `system#default`, оно
+будет разрезолвлено через метод [`getAllPersonalSettings`](./dispatch#getallpersonalsettings), после чего
+возвращается код темы оператора по умолчанию.
+:::
 
 ```ts
-try {
-  const theme = await getTheme('dark')
-  console.log(theme)
-} catch (error) {
-  console.error('Не удалось загрузить тему', error)
+import { getCurrentUserTheme } from './utils/theme'
+
+const themeCode = await getCurrentUserTheme(jsApi.getCurrentUser().uuid)
+
+if (themeCode) {
+  console.log(`Текущая тема: ${themeCode}`)
 }
 ```
 
-Метод выбрасывает ошибку, если имя темы пустое или сервер вернул HTTP-статус за
-пределами диапазона `200–299`.
+## Получение конфигурации темы
 
-## Доступные функции
+```ts
+import { getThemeConfigurationByCode, ThemeError } from './utils/theme'
 
-- `getTheme(themeName)` — получает строковое значение указанной темы.
+try {
+  const configuration = await getThemeConfigurationByCode('operator')
+  console.log(configuration)
+} catch (error) {
+  if (error instanceof ThemeError) {
+    console.error(error.message, error.responseBody)
+  }
+}
+```
+
+Функция выполняет запрос
+`GET /sd/jspresource?id=common&method=theme&theme=<THEME_CODE>`. Код темы
+автоматически кодируется через `URLSearchParams`.
+
+Пустой код темы вызывает `TypeError`. При недоступности endpoint функция
+выбрасывает `ThemeError`; исходное тело ответа доступно в `responseBody`.
+
+## Публичный API
+
+- `getThemeConfigurationByCode(themeCode)` — возвращает конфигурацию темы по коду;
+- `getCurrentUserTheme(userUuid)` — возвращает код темы текущего пользователя;
+- `ThemeError` — ошибка загрузки конфигурации темы.
