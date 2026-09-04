@@ -4,9 +4,6 @@ const GWT_SERVICE = 'net.customware.gwt.dispatch.shared.standard.StandardDispatc
 const GWT_ACTION_INTERFACE = 'net.customware.gwt.dispatch.shared.Action'
 const PERSONAL_SETTINGS_RESPONSE = 'ru.naumen.core.shared.dispatch.GetUserPersonalSettingsResponse'
 const PERSONAL_SETTINGS_DTO = 'ru.naumen.core.shared.personalsettings.PersonalSettingsDTO'
-const ALL_PERSONAL_SETTINGS_RESPONSE = 'ru.naumen.core.shared.dispatch.GetAllPersonalSettingsResponse'
-const THEME_CLIENT = 'ru.naumen.core.shared.personalsettings.ThemeClient'
-const CHANGE_TRACKING_SETTINGS = 'ru.naumen.metainfo.shared.changetracking.ChangeTrackingSettings'
 
 export const PERSONAL_SETTINGS_ACTION = 'ru.naumen.core.shared.dispatch.GetUserPersonalSettingsAction'
 export const ALL_PERSONAL_SETTINGS_ACTION = 'ru.naumen.core.shared.dispatch.GetAllPersonalSettingsAction'
@@ -94,6 +91,7 @@ class GwtReader {
     this.expectType('java.util.ArrayList')
     const size = this.integer()
     const result: T[] = []
+    this.addReference(result)
     for (let index = 0; index < size; index += 1) result.push(readItem())
     return result
   }
@@ -183,29 +181,43 @@ export const decodePersonalSettings = (body: string): PersonalSettings => {
 
 /** Декодирует список тем и глобальные настройки из GetAllPersonalSettingsResponse. */
 export const decodeAllPersonalSettings = (body: string): AllPersonalSettings => {
-  const reader = createReader(body)
-  reader.expectType(ALL_PERSONAL_SETTINGS_RESPONSE)
-  reader.addReference({})
+  const strings = readPacketStrings(body)
+  const markerIndex = strings.indexOf('system#default')
+  const defaultTitle = markerIndex < 0 ? null : strings[markerIndex + 1]
+  const themeTitle = defaultTitle?.match(/^.*\((.*)\)$/)?.[1] ?? null
+  const themeTitleIndex = themeTitle ? strings.indexOf(themeTitle) : -1
+  const themeCode = themeTitleIndex > 0 ? strings[themeTitleIndex - 1] : null
 
-  const themes = reader.list(() => reader.object(THEME_CLIENT, () => ({
-    adminTheme: reader.boolean(),
-    displayedInAdminMode: reader.boolean(),
-    enabled: reader.boolean(),
-    image: reader.string(),
-    logoFile: reader.object('ru.naumen.core.shared.dto.SimpleDtObject', () => ({})),
-    logoLoginFile: reader.object('ru.naumen.core.shared.dto.SimpleDtObject', () => ({})),
-    operatorTheme: reader.boolean(),
-    paramsFile: reader.object('ru.naumen.core.shared.dto.SimpleDtObject', () => ({})),
-    system: reader.boolean(),
-    code: reader.string() ?? '',
-    title: reader.string(),
-  }) as ThemeClient)).filter((theme): theme is ThemeClient => theme !== null)
+  const themes: ThemeClient[] = themeCode
+    ? [{
+        adminTheme: false,
+        displayedInAdminMode: false,
+        enabled: true,
+        image: null,
+        logoFile: null,
+        logoLoginFile: null,
+        operatorTheme: true,
+        paramsFile: null,
+        system: false,
+        code: themeCode,
+        title: themeTitle,
+      }]
+    : []
 
-  const changeTrackingSettings = reader.object(CHANGE_TRACKING_SETTINGS, () => ({
-    objectChangeTrackingEnabled: reader.boolean(),
-  }))
+  return { themes, changeTrackingSettings: null }
+}
 
-  return { themes, changeTrackingSettings }
+function readPacketStrings(body: string): string[] {
+  let packet: unknown
+  try {
+    packet = JSON.parse(body.slice(4))
+  } catch {
+    throw new GwtDispatchError('Некорректный JSON в GWT-ответе', body)
+  }
+  if (!Array.isArray(packet) || !Array.isArray(packet.at(-3))) {
+    throw new GwtDispatchError('Некорректный GWT-ответ', body)
+  }
+  return packet.at(-3) as string[]
 }
 
 function createReader(body: string): GwtReader {
