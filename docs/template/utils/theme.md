@@ -2,8 +2,24 @@
 
 [Вернуться к списку утилит](./)
 
-Модуль `theme` загружает строковую конфигурацию темы NSMP по её коду через
-endpoint `/sd/jspresource`.
+Модуль `theme` отвечает за работу с темой пользователя: получает код темы
+текущего пользователя и загружает строковую конфигурацию NSMP по этому коду
+через endpoint `/sd/jspresource`.
+
+## Получение темы текущего пользователя
+
+```ts
+import { getCurrentUserTheme } from './utils/theme'
+
+const themeCode = await getCurrentUserTheme(jsApi.getCurrentUser().uuid)
+
+if (themeCode) {
+  console.log(`Текущая тема: ${themeCode}`)
+}
+```
+
+Функция возвращает код темы операторского интерфейса или `null`, если тема не
+задана. Получение остальных персональных настроек остаётся в модуле `dispatch`.
 
 ## Получение конфигурации темы
 
@@ -30,4 +46,5 @@ try {
 ## Публичный API
 
 - `getThemeConfigurationByCode(themeCode)` — возвращает конфигурацию темы по коду;
+- `getCurrentUserTheme(userUuid)` — возвращает код темы текущего пользователя;
 - `ThemeError` — ошибка загрузки конфигурации темы.

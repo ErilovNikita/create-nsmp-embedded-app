@@ -1,3 +1,5 @@
+import { Dispatch } from '../dispatch'
+
 /** Ошибка загрузки конфигурации темы. */
 export class ThemeError extends Error {
   constructor(message: string, readonly responseBody?: string) {
@@ -31,3 +33,8 @@ export const getThemeConfigurationByCode = async (themeCode: string): Promise<st
 
   return body
 }
+
+/** Получает код темы операторского интерфейса текущего пользователя. */
+export const getCurrentUserTheme = async (userUuid: string): Promise<string | null> => (
+  (await new Dispatch().getPersonalSettings(userUuid)).themeOperator
+)

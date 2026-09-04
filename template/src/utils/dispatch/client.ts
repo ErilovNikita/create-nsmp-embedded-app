@@ -111,11 +111,6 @@ export class Dispatch {
     return body
   }
 
-  /** Получает тему операторского интерфейса пользователя. */
-  async getThemeOperator(userUuid: string): Promise<string | null> {
-    return (await this.getPersonalSettings(userUuid)).themeOperator
-  }
-
   /** Получает персональные настройки как один из поддерживаемых Dispatch action. */
   async getPersonalSettings(userUuid: string): Promise<PersonalSettings> {
     return decodePersonalSettings(await this.dispatch(PERSONAL_SETTINGS_ACTION, userUuid))

@@ -1,1 +1,5 @@
-export { getThemeConfigurationByCode, ThemeError } from './client'
+export {
+	getCurrentUserTheme,
+	getThemeConfigurationByCode,
+	ThemeError,
+} from './client'

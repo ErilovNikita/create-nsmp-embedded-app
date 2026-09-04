@@ -38,10 +38,8 @@ console.log(settings.themeOperator)
 ```
 
 Метод `getPersonalSettings(userUuid)` получает персональные настройки
-пользователя через Dispatch и возвращает объект `PersonalSettings`. Метод
-`getThemeOperator(userUuid)` — удобный специализированный метод этого же
-клиента: он возвращает только тему операторского интерфейса или `null`, если
-тема не задана.
+пользователя через Dispatch и возвращает объект `PersonalSettings`. Получение
+кода темы текущего пользователя вынесено в утилиту `theme`.
 
 | Поле | Тип | Назначение |
 | --- | --- | --- |
@@ -115,7 +113,6 @@ GWT-сборки, сервер вернул ошибку или ответ не�
 - `new Dispatch(options?)` — создаёт клиент для выполнения GWT-RPC-запросов к Desk;
 - `client.dispatch(action, userUuid, actionSignature?)` — выполняет произвольный action;
 - `client.getPersonalSettings(userUuid)` — метод получения персональных настроек;
-- `client.getThemeOperator(userUuid)` — метод получения темы оператора;
 - `GwtDispatchError` — ошибка GWT Dispatch;
 - `PersonalSettings` — тип результата;
 - `DispatchOptions` — тип параметров клиента.
