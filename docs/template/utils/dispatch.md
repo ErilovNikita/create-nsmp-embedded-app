@@ -2,16 +2,26 @@
 
 [Вернуться к списку утилит](./)
 
-Модуль `dispatch` предназначен для получения данных из сервиса Desk с помощью
-универсальной функции Dispatch. Dispatch формирует GWT-RPC-запрос, отправляет
-его в Desk и декодирует ответ.
+Модуль `dispatch` использует штатный endpoint - `/sd/admin/dispatch` для выполнения запросов в формате GWT-RPC. 
+
+Утилита формирует POST-запрос с именем action, параметрами и данными
+GWT-сборки, а затем проверяет и декодирует ответ от NSMP. 
+Такой механизм позволяет обращаться к серверным Dispatch action через единый протокол GWT-RPC.
+
+Утилита автоматически получает данные GWT-сборки перед выполнением запроса.
+Если `policyHash` не передан, она загружает `police.txt` и извлекает из него
+hash. 
+
+Если не указан `actionSignature` - то автоматически загружается файл `<policyHash>.gwt.rpc`, из которого извлекается сигнатура соответствующего
+`action`. 
+
+Полученные данные кешируются внутри экземпляра `Dispatch`.
 
 ## Dispatch action
 
 Универсальный метод `dispatch(action, userUuid, actionSignature?)` выполняет
-произвольный GWT Dispatch action и возвращает успешный ответ Desk без
-декодирования. Если сигнатура action не передана, она извлекается из policy-файла
-GWT-сборки.
+произвольный GWT Dispatch action и возвращает успешный ответ без
+декодирования _(В сыром виде)_. Если сигнатура `action` не передана, она извлекается из policy-файла GWT-сборки.
 
 ```ts
 import { Dispatch } from './utils/dispatch'
@@ -23,13 +33,14 @@ const responseBody = await dispatch.dispatch(
 )
 ```
 
-## Получение персональных настроек
+## Получение персональных настроек пользователя
+
+### `getPersonalSettings(userUuid)`
 
 ```ts
-import { Dispatch, type PersonalSettings } from './utils/dispatch'
+import { type PersonalSettings } from './utils/dispatch'
 
-const client = new Dispatch()
-const settings: PersonalSettings = await client.getPersonalSettings(
+const settings: PersonalSettings = await new Dispatch().getPersonalSettings(
   jsApi.getCurrentUser().uuid,
 )
 
@@ -38,8 +49,10 @@ console.log(settings.themeOperator)
 ```
 
 Метод `getPersonalSettings(userUuid)` получает персональные настройки
-пользователя через Dispatch и возвращает объект `PersonalSettings`. Получение
-кода темы текущего пользователя вынесено в утилиту `theme`.
+пользователя через Dispatch и возвращает объект `PersonalSettings`.
+
+> [!TIP]
+> Получение кода темы текущего пользователя напрямую, вынесено в утилиту [`theme`](./theme.md).
 
 | Поле | Тип | Назначение |
 | --- | --- | --- |
@@ -58,10 +71,48 @@ console.log(settings.themeOperator)
 | `useUserQATiles` | `boolean \| null` | Пользовательские QA-плитки |
 | `personUuid` | `string \| null` | UUID пользователя |
 
+## Получение персональных настроек по умолчанию
+
+### `getAllPersonalSettings()`
+
+```ts
+const settings = await new Dispatch().getAllPersonalSettings()
+
+const defaultTheme = settings.themes.find(theme => theme.operatorTheme)?.code
+console.log(defaultTheme)
+```
+
+Метод `getAllPersonalSettings()` получает персональные настройки по умолчанию,
+включая доступные темы и тему оператора по умолчанию. Метод не принимает
+параметров и возвращает объект `AllPersonalSettings`.
+
+| Поле | Тип | Назначение |
+| --- | --- | --- |
+| `themes` | `ThemeClient[]` | Доступные темы и признаки темы оператора или администратора |
+| `changeTrackingSettings` | `unknown` | Настройки отслеживания изменений |
+
+### Атрибуты темы (`ThemeClient`)
+
+Каждый элемент массива `themes` содержит следующие атрибуты:
+
+| Поле | Тип | Назначение |
+| --- | --- | --- |
+| `code` | `string` | Код темы |
+| `title` | `string \| null` | Название темы |
+| `displayedInAdminMode` | `boolean` | Доступность темы в административном режиме |
+| `system` | `boolean` | Системная тема |
+| `enabled` | `boolean` | Включённая тема |
+| `operatorTheme` | `boolean` | Тема операторского интерфейса |
+| `adminTheme` | `boolean` | Тема административного интерфейса |
+| `image` | `string \| null` | Изображение темы |
+| `paramsFile` | `unknown \| null` | Файл параметров темы |
+| `logoFile` | `unknown \| null` | Основной файл логотипа |
+| `logoLoginFile` | `unknown \| null` | Файл логотипа для страницы входа |
+
 ## Настройка Dispatch
 
-Для формирования Dispatch-запросов параметры подключения к Desk, CSRF-токен,
-policy hash и сигнатура GWT action определяются автоматически. Для
+Для формирования Dispatch-запросов параметры подключения к NSMP, `CSRF-токен`,
+`policy hash` и сигнатура `GWT action` определяются автоматически. Для
 нестандартного окружения их можно переопределить через параметры клиента:
 
 ```ts
@@ -110,10 +161,12 @@ GWT-сборки, сервер вернул ошибку или ответ не�
 
 ## Публичный API
 
-- `new Dispatch(options?)` — создаёт клиент для выполнения GWT-RPC-запросов к Desk;
+- `new Dispatch(options?)` — создаёт клиент для выполнения GWT-RPC-запросов к NSMP;
 - `client.dispatch(action, userUuid, actionSignature?)` — выполняет произвольный action;
 - `client.getPersonalSettings(userUuid)` — метод получения персональных настроек;
+- `client.getAllPersonalSettings()` — метод получения общих персональных настроек и доступных тем;
 - `GwtDispatchError` — ошибка GWT Dispatch;
 - `PersonalSettings` — тип результата;
+- `AllPersonalSettings` — тип общих персональных настроек;
 - `DispatchOptions` — тип параметров клиента.
 

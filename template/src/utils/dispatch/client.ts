@@ -64,7 +64,7 @@ const findCsrfToken = (): string | undefined => {
   return undefined
 }
 
-/** Универсальный клиент выполнения GWT Dispatch action в NSMP Desk. */
+/** Универсальный клиент выполнения GWT Dispatch action в NSMP. */
 export class Dispatch {
   private readonly buildInfo = new Map<string, Promise<BuildInfo>>()
 
