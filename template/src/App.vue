@@ -1,31 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import User from './components/User.vue'
 import { goToUrl } from './services/utils.ts'
-import { checkVersion, type VersionCheckResult } from './utils/version'
-
-const version = ref<VersionCheckResult>()
-const versionError = ref<string>()
-
-const getErrorMessage = (error: unknown): string => (
-  error instanceof Error ? error.message : String(error)
-)
-
-const checkAppVersion = async (): Promise<void> => {
-  try {
-    version.value = await checkVersion({
-      service: 'github',
-      owner: 'ErilovNikita',
-      repo: 'create-nsmp-embedded-app',
-    })
-  } catch (error) {
-    versionError.value = getErrorMessage(error)
-  }
-}
-
-onMounted(() => {
-  void checkAppVersion()
-})
 </script>
 
 <template>
@@ -40,13 +15,6 @@ onMounted(() => {
 
   <p class="text-muted">This template was developed and supported by <a href="https://github.com/ErilovNikita/create-nsmp-embedded-app">ErilovNikita</a></p>
 
-  <div class="version-info text-muted">
-    <p v-if="versionError">Не удалось проверить обновления: {{ versionError }}</p>
-    <p v-else-if="!version">Проверяем последнюю версию на GitHub...</p>
-    <template v-else>
-      <p>{{ version.message }}</p>
-    </template>
-  </div>
 </template>
 
 <style scoped>

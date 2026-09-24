@@ -1,4 +1,3 @@
-import packageJson from '../../../package.json'
 import { getGitHubReleaseTags } from './github'
 import { getGitLabReleaseTags } from './gitlab'
 import type {
@@ -81,7 +80,7 @@ const comparePrerelease = (local: string[], remote: string[]): VersionComparison
  *
  * @returns Нормализованная текущая версия приложения.
  */
-export const getCurrentVersion = (): string => normalizeVersion(packageJson.version)
+export const getCurrentVersion = (): string => normalizeVersion(__APP_VERSION__)
 
 /**
  * Сравнивает текущую и релизную версии по правилам SemVer.

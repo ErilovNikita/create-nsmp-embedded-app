@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { defaultProjectName, templateDir } from './config.js'
+import { defaultProjectName, templateDir, utilitiesDir } from './config.js'
 import { runDependencyCallbacks } from './dependencies.js'
 import { getLatestPackageVersion, installDependencies } from './npm.js'
 import { createProject } from './project.js'
@@ -36,7 +36,9 @@ export async function run(args = process.argv.slice(2)) {
         templateDir,
         targetDir,
         projectName: options.projectName,
-        dependencies
+        dependencies,
+        utilitiesDir,
+        utilities: options.utilities
     })
 
     if (options.dependencies.some(({ callback }) => callback)) {

@@ -7,6 +7,8 @@ dist-zip/
 build/
 template/public/modules/*
 template/public/modules
+# Локальная ссылка на исходники утилит для разработки шаблона
+/template/src/utils
 
 # Local environment files
 .env

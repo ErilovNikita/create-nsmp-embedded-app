@@ -73,20 +73,43 @@ async function restoreTemplateFiles(targetDir) {
     }))
 }
 
+async function copyUtilities(utilitiesDir, targetDir, utilities) {
+    const targetUtilitiesDir = path.join(targetDir, 'src', 'utils')
+    await fs.mkdir(targetUtilitiesDir, { recursive: true })
+
+    await Promise.all(utilities.map(async utility => {
+        await fs.cp(
+            path.join(utilitiesDir, utility),
+            path.join(targetUtilitiesDir, utility),
+            { recursive: true, errorOnExist: true }
+        )
+    }))
+}
+
 export async function createProject({
     templateDir,
     targetDir,
     projectName,
-    dependencies = {}
+    dependencies = {},
+    utilitiesDir,
+    utilities = []
 }) {
     await createTargetDirectory(targetDir)
     await fs.cp(templateDir, targetDir, {
         recursive: true,
         filter: source => {
             const relativePath = path.relative(templateDir, source)
-            return !relativePath.split(path.sep).includes('node_modules')
+            const pathParts = relativePath.split(path.sep)
+            const isLocalUtilitiesLink = pathParts[0] === 'src' && pathParts[1] === 'utils'
+
+            return !pathParts.includes('node_modules') && !isLocalUtilitiesLink
         }
     })
+
+    if (utilities.length > 0) {
+        if (!utilitiesDir) throw new Error('Не указан каталог утилит')
+        await copyUtilities(utilitiesDir, targetDir, utilities)
+    }
 
     await Promise.all([
         updatePackageJson(targetDir, projectName, dependencies),

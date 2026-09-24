@@ -2,18 +2,69 @@ import prompts from 'prompts'
 import {
     isValidProjectName,
     normalizeDependency,
-    optionalDependencies
+    optionalDependencies,
+    optionalUtilities,
+    resolveUtilities
 } from './config.js'
 import { printCancelled } from './ui.js'
 
-export function createDependencyQuestion(dependency, index) {
-    const { name } = normalizeDependency(dependency)
+function showDescriptions(kleur) {
+    if (this.renderDescriptions) return
 
+    const renderOption = this.renderOption.bind(this)
+    this.renderOption = (cursor, option, index, arrowIndicator) => {
+        const rendered = renderOption(cursor, option, index, arrowIndicator)
+        if (cursor === index || !option.description) return rendered
+
+        return `${rendered}${kleur.gray(` - ${option.description}`)}`
+    }
+    this.renderDescriptions = true
+}
+
+function selectRequiredUtilities(state) {
+    const selectedUtilities = resolveUtilities(
+        state.value.filter(utility => utility.selected).map(utility => utility.value)
+    )
+
+    for (const utility of state.value) {
+        if (selectedUtilities.includes(utility.value)) utility.selected = true
+    }
+}
+
+export function createUtilitiesQuestion() {
     return {
-        type: 'confirm',
-        name: `dependency_${index}`,
-        message: `Подключить дополнительный пакет ${name}?`,
-        initial: true
+        type: 'multiselect',
+        name: 'utilities',
+        message: 'Какие утилиты добавить в проект?',
+        choices: optionalUtilities.map(utility => ({
+            title: utility.name,
+            description: utility.description,
+            value: utility.name
+        })),
+        instructions: false,
+        hint: '- пробел: выбрать, enter: продолжить',
+        onRender: showDescriptions,
+        onState: selectRequiredUtilities
+    }
+}
+
+export function createDependenciesQuestion() {
+    return {
+        type: 'multiselect',
+        name: 'dependencies',
+        message: 'Какие дополнительные пакеты установить?',
+        choices: optionalDependencies.map((dependency, index) => {
+            const { name, description } = normalizeDependency(dependency)
+            return {
+                title: name,
+                description,
+                value: index,
+                selected: true
+            }
+        }),
+        instructions: false,
+        hint: '- пробел: выбрать, enter: продолжить',
+        onRender: showDescriptions
     }
 }
 
@@ -30,7 +81,8 @@ export async function askProjectOptions(defaultName) {
                     isValidProjectName(value) ||
                     'Допустимы строчные латинские буквы, цифры и дефис.'
             },
-            ...optionalDependencies.map(createDependencyQuestion),
+            createUtilitiesQuestion(),
+            createDependenciesQuestion(),
             {
                 type: 'confirm',
                 name: 'install',
@@ -52,8 +104,9 @@ export async function askProjectOptions(defaultName) {
     return {
         projectName: answers.projectName,
         install: answers.install,
-        dependencies: optionalDependencies
-            .filter((_, index) => answers[`dependency_${index}`])
-            .map(normalizeDependency)
+        dependencies: answers.dependencies.map(index =>
+            normalizeDependency(optionalDependencies[index])
+        ),
+        utilities: resolveUtilities(answers.utilities)
     }
 }

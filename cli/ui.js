@@ -1,5 +1,11 @@
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+const { version } = require('../package.json')
+
 export const banner = String.raw`
-    _   _______ __  _______     ______          __             __    __         __   ___  by @minitwiks
+                                                                                          v${version}
+    _   _______ __  _______     ______          __             __    __         __   ___. by @minitwiks
    / | / / ___//  |/  / __ \   / ____/___ ___  / /_  ___  ____/ /___/ /__  ____/ /  /   |  ____  ____
   /  |/ /\__ \/ /|_/ / /_/ /  / __/ / __ '__ \/ __ \/ _ \/ __  / __  / _ \/ __  /  / /| | / __ \/ __ \
  / /|  /___/ / /  / / ____/  / /___/ / / / / / /_/ /  __/ /_/ / /_/ /  __/ /_/ /  / ___ |/ /_/ / /_/ /
