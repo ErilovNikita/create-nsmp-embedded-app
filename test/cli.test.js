@@ -14,7 +14,12 @@ import {
     runDependencyCallbacks,
     setupNsmpVueComponents
 } from '../cli/dependencies.js'
-import { createProject } from '../cli/project.js'
+import {
+    addDependencies,
+    addUtilities,
+    createProject,
+    isVueViteProject
+} from '../cli/project.js'
 import {
     createDependenciesQuestion,
     createUtilitiesQuestion
@@ -383,6 +388,61 @@ test('createProject refuses to overwrite an existing directory', async t => {
             projectName: 'existing-app'
         }),
         /Папка уже существует/
+    )
+})
+
+test('isVueViteProject recognizes projects with dependencies in either package section', async t => {
+    const targetDir = await fs.mkdtemp(path.join(os.tmpdir(), 'nsmp-vue-vite-'))
+    t.after(() => fs.rm(targetDir, { recursive: true, force: true }))
+    await fs.writeFile(
+        path.join(targetDir, 'package.json'),
+        JSON.stringify({ dependencies: { vue: '^3.5.0' }, devDependencies: { vite: '^6.0.0' } })
+    )
+
+    assert.equal(await isVueViteProject(targetDir), true)
+
+    await fs.writeFile(path.join(targetDir, 'package.json'), JSON.stringify({ dependencies: { vue: '^3.5.0' } }))
+    assert.equal(await isVueViteProject(targetDir), false)
+})
+
+test('existing project helpers add dependencies and selected utilities without template files', async t => {
+    const targetDir = await fs.mkdtemp(path.join(os.tmpdir(), 'nsmp-existing-'))
+    const localUtilitiesDir = path.join(targetDir, 'library-utilities')
+    t.after(() => fs.rm(targetDir, { recursive: true, force: true }))
+    await fs.mkdir(path.join(localUtilitiesDir, 'environment'), { recursive: true })
+    await fs.writeFile(path.join(localUtilitiesDir, 'environment', 'index.ts'), 'export const isDev = true\n')
+    await fs.writeFile(
+        path.join(targetDir, 'package.json'),
+        JSON.stringify({ dependencies: { vue: '^3.5.0' }, devDependencies: { vite: '^6.0.0' } })
+    )
+
+    await addDependencies({ targetDir, dependencies: { 'nsmp-icons': 'latest' } })
+    await addUtilities({
+        targetDir,
+        utilitiesDir: localUtilitiesDir,
+        utilities: ['environment']
+    })
+
+    const packageJson = JSON.parse(await fs.readFile(path.join(targetDir, 'package.json'), 'utf8'))
+    assert.equal(packageJson.dependencies['nsmp-icons'], 'latest')
+    assert.equal(
+        await fs.readFile(path.join(targetDir, 'src', 'utils', 'environment', 'index.ts'), 'utf8'),
+        'export const isDev = true\n'
+    )
+    await assert.rejects(fs.access(path.join(targetDir, 'index.html')))
+
+    await fs.writeFile(
+        path.join(targetDir, 'src', 'utils', 'environment', 'index.ts'),
+        'export const existing = true\n'
+    )
+    await addUtilities({
+        targetDir,
+        utilitiesDir: localUtilitiesDir,
+        utilities: ['environment']
+    })
+    assert.equal(
+        await fs.readFile(path.join(targetDir, 'src', 'utils', 'environment', 'index.ts'), 'utf8'),
+        'export const existing = true\n'
     )
 })
 

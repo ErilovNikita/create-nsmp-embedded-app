@@ -110,3 +110,48 @@ export async function askProjectOptions(defaultName) {
         utilities: resolveUtilities(answers.utilities)
     }
 }
+
+export async function askExistingProjectOptions() {
+    let cancelled = false
+    const answers = await prompts(
+        [
+            {
+                type: 'confirm',
+                name: 'initialize',
+                message: 'В текущей папке найден Vue + Vite проект. Подключить NSMP-зависимости и утилиты?',
+                initial: true
+            },
+            {
+                ...createUtilitiesQuestion(),
+                type: (_, values) => values.initialize ? 'multiselect' : null
+            },
+            {
+                ...createDependenciesQuestion(),
+                type: (_, values) => values.initialize ? 'multiselect' : null
+            },
+            {
+                type: (_, values) => values.initialize ? 'confirm' : null,
+                name: 'install',
+                message: 'Установить npm-зависимости сейчас?',
+                initial: true
+            }
+        ],
+        {
+            onCancel: () => {
+                cancelled = true
+                printCancelled()
+                return false
+            }
+        }
+    )
+
+    if (cancelled || !answers.initialize) return null
+
+    return {
+        install: answers.install,
+        dependencies: answers.dependencies.map(index =>
+            normalizeDependency(optionalDependencies[index])
+        ),
+        utilities: resolveUtilities(answers.utilities)
+    }
+}

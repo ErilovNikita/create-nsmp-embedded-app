@@ -25,6 +25,17 @@ async function updatePackageJson(targetDir, projectName, dependencies) {
     await fs.writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`)
 }
 
+export async function addDependencies({ targetDir, dependencies = {} }) {
+    if (Object.keys(dependencies).length === 0) return
+
+    const packageJsonPath = path.join(targetDir, 'package.json')
+    const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf8'))
+    packageJson.dependencies ??= {}
+    Object.assign(packageJson.dependencies, dependencies)
+
+    await fs.writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`)
+}
+
 async function updateDocumentTitle(targetDir, projectName) {
     const indexHtmlPath = path.join(targetDir, 'index.html')
     const indexHtml = await fs.readFile(indexHtmlPath, 'utf8')
@@ -78,12 +89,45 @@ async function copyUtilities(utilitiesDir, targetDir, utilities) {
     await fs.mkdir(targetUtilitiesDir, { recursive: true })
 
     await Promise.all(utilities.map(async utility => {
+        const targetUtilityDir = path.join(targetUtilitiesDir, utility)
+
+        try {
+            await fs.access(targetUtilityDir)
+            return
+        } catch (error) {
+            if (error.code !== 'ENOENT') throw error
+        }
+
         await fs.cp(
             path.join(utilitiesDir, utility),
-            path.join(targetUtilitiesDir, utility),
-            { recursive: true, errorOnExist: true }
+            targetUtilityDir,
+            { recursive: true, force: false, errorOnExist: true }
         )
     }))
+}
+
+export async function isVueViteProject(targetDir) {
+    try {
+        const packageJson = JSON.parse(
+            await fs.readFile(path.join(targetDir, 'package.json'), 'utf8')
+        )
+        const packages = {
+            ...packageJson.dependencies,
+            ...packageJson.devDependencies
+        }
+
+        return Boolean(packages.vue && packages.vite)
+    } catch (error) {
+        if (error.code === 'ENOENT' || error instanceof SyntaxError) return false
+        throw error
+    }
+}
+
+export async function addUtilities({ targetDir, utilitiesDir, utilities = [] }) {
+    if (utilities.length === 0) return
+    if (!utilitiesDir) throw new Error('Не указан каталог утилит')
+
+    await copyUtilities(utilitiesDir, targetDir, utilities)
 }
 
 export async function createProject({
@@ -106,10 +150,7 @@ export async function createProject({
         }
     })
 
-    if (utilities.length > 0) {
-        if (!utilitiesDir) throw new Error('Не указан каталог утилит')
-        await copyUtilities(utilitiesDir, targetDir, utilities)
-    }
+    await addUtilities({ targetDir, utilitiesDir, utilities })
 
     await Promise.all([
         updatePackageJson(targetDir, projectName, dependencies),

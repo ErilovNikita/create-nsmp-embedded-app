@@ -49,12 +49,21 @@ export function printError(error) {
     console.error(error.message)
 }
 
-export function printCompletion({ targetDir, projectName, installed }) {
-    console.log(`\n${ui.green('✔ Проект успешно создан!')}`)
+export function printCompletion({ targetDir, projectName, installed, initialized = false }) {
+    console.log(`\n${ui.green(initialized ? '✔ NSMP-интеграция подключена!' : '✔ Проект успешно создан!')}`)
     console.log(`\nРасположение: ${ui.bold(targetDir)}`)
 
     if (!installed) {
         console.log(ui.yellow('\nЗависимости ещё не установлены. Сначала выполните npm install.'))
+    }
+
+    if (initialized) {
+        console.log(`
+Следующие шаги:
+
+  ${!installed ? `${ui.cyan('npm install')}\n  ` : ''}${ui.cyan('npm run dev')}
+`)
+        return
     }
 
     console.log(`
