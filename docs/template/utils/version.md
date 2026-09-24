@@ -109,7 +109,7 @@ try {
 
 - `checkVersion(source, currentVersion?)` — выполняет полную проверку версии и
   возвращает `VersionCheckResult`;
-- `getCurrentVersion()` — возвращает нормализованную версию из `package.json`;
+- `getCurrentVersion()` — возвращает нормализованную версию текущей npm-сборки;
 - `getLastVersion(source)` — возвращает максимальную стабильную версию из
   GitHub или GitLab;
 - `compareVersions(localVersion, remoteVersion)` — сравнивает две версии и

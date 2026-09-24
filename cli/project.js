@@ -1,15 +1,15 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-async function assertTargetDoesNotExist(targetDir) {
+async function createTargetDirectory(targetDir) {
     try {
-        await fs.access(targetDir)
+        await fs.mkdir(targetDir)
     } catch (error) {
-        if (error.code === 'ENOENT') return
+        if (error.code === 'EEXIST') {
+            throw new Error(`Папка уже существует: ${targetDir}`)
+        }
         throw error
     }
-
-    throw new Error(`Папка уже существует: ${targetDir}`)
 }
 
 async function updatePackageJson(targetDir, projectName, dependencies) {
@@ -21,6 +21,17 @@ async function updatePackageJson(targetDir, projectName, dependencies) {
         packageJson.dependencies ??= {}
         Object.assign(packageJson.dependencies, dependencies)
     }
+
+    await fs.writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`)
+}
+
+export async function addDependencies({ targetDir, dependencies = {} }) {
+    if (Object.keys(dependencies).length === 0) return
+
+    const packageJsonPath = path.join(targetDir, 'package.json')
+    const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf8'))
+    packageJson.dependencies ??= {}
+    Object.assign(packageJson.dependencies, dependencies)
 
     await fs.writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`)
 }
@@ -73,20 +84,73 @@ async function restoreTemplateFiles(targetDir) {
     }))
 }
 
+async function copyUtilities(utilitiesDir, targetDir, utilities) {
+    const targetUtilitiesDir = path.join(targetDir, 'src', 'utils')
+    await fs.mkdir(targetUtilitiesDir, { recursive: true })
+
+    await Promise.all(utilities.map(async utility => {
+        const targetUtilityDir = path.join(targetUtilitiesDir, utility)
+
+        try {
+            await fs.access(targetUtilityDir)
+            return
+        } catch (error) {
+            if (error.code !== 'ENOENT') throw error
+        }
+
+        await fs.cp(
+            path.join(utilitiesDir, utility),
+            targetUtilityDir,
+            { recursive: true, force: false, errorOnExist: true }
+        )
+    }))
+}
+
+export async function isVueViteProject(targetDir) {
+    try {
+        const packageJson = JSON.parse(
+            await fs.readFile(path.join(targetDir, 'package.json'), 'utf8')
+        )
+        const packages = {
+            ...packageJson.dependencies,
+            ...packageJson.devDependencies
+        }
+
+        return Boolean(packages.vue && packages.vite)
+    } catch (error) {
+        if (error.code === 'ENOENT' || error instanceof SyntaxError) return false
+        throw error
+    }
+}
+
+export async function addUtilities({ targetDir, utilitiesDir, utilities = [] }) {
+    if (utilities.length === 0) return
+    if (!utilitiesDir) throw new Error('Не указан каталог утилит')
+
+    await copyUtilities(utilitiesDir, targetDir, utilities)
+}
+
 export async function createProject({
     templateDir,
     targetDir,
     projectName,
-    dependencies = {}
+    dependencies = {},
+    utilitiesDir,
+    utilities = []
 }) {
-    await assertTargetDoesNotExist(targetDir)
+    await createTargetDirectory(targetDir)
     await fs.cp(templateDir, targetDir, {
         recursive: true,
         filter: source => {
             const relativePath = path.relative(templateDir, source)
-            return !relativePath.split(path.sep).includes('node_modules')
+            const pathParts = relativePath.split(path.sep)
+            const isLocalUtilitiesLink = pathParts[0] === 'src' && pathParts[1] === 'utils'
+
+            return !pathParts.includes('node_modules') && !isLocalUtilitiesLink
         }
     })
+
+    await addUtilities({ targetDir, utilitiesDir, utilities })
 
     await Promise.all([
         updatePackageJson(targetDir, projectName, dependencies),

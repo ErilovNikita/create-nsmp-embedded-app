@@ -10,6 +10,9 @@ export default defineConfig(({ mode }) => {
     .replace(/\/sd$/, '')
 
   const config = {
+    define: {
+      __APP_VERSION__: JSON.stringify(process.env.npm_package_version ?? '0.0.0')
+    },
     plugins: [
       vue(),
       zipPack({

@@ -1,5 +1,11 @@
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+const { version } = require('../package.json')
+
 export const banner = String.raw`
-    _   _______ __  _______     ______          __             __    __         __   ___  by @minitwiks
+                                                                                          v${version}
+    _   _______ __  _______     ______          __             __    __         __   ___. by @minitwiks
    / | / / ___//  |/  / __ \   / ____/___ ___  / /_  ___  ____/ /___/ /__  ____/ /  /   |  ____  ____
   /  |/ /\__ \/ /|_/ / /_/ /  / __/ / __ '__ \/ __ \/ _ \/ __  / __  / _ \/ __  /  / /| | / __ \/ __ \
  / /|  /___/ / /  / / ____/  / /___/ / / / / / /_/ /  __/ /_/ / /_/ /  __/ /_/ /  / ___ |/ /_/ / /_/ /
@@ -43,12 +49,21 @@ export function printError(error) {
     console.error(error.message)
 }
 
-export function printCompletion({ targetDir, projectName, installed }) {
-    console.log(`\n${ui.green('✔ Проект успешно создан!')}`)
+export function printCompletion({ targetDir, projectName, installed, initialized = false }) {
+    console.log(`\n${ui.green(initialized ? '✔ NSMP-интеграция подключена!' : '✔ Проект успешно создан!')}`)
     console.log(`\nРасположение: ${ui.bold(targetDir)}`)
 
     if (!installed) {
         console.log(ui.yellow('\nЗависимости ещё не установлены. Сначала выполните npm install.'))
+    }
+
+    if (initialized) {
+        console.log(`
+Следующие шаги:
+
+  ${!installed ? `${ui.cyan('npm install')}\n  ` : ''}${ui.cyan('npm run dev')}
+`)
+        return
     }
 
     console.log(`

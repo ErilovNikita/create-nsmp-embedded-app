@@ -6,10 +6,11 @@
 npm run build
 ```
 
-Команда выполняет два этапа:
+Команда выполняет три этапа:
 
-1. `vue-tsc -b` проверяет TypeScript;
-2. `vite build` собирает приложение и запускает ZIP-плагин.
+1. `npm run pack:modules` упаковывает скриптовые модули из `modules/`, если они есть;
+2. `vue-tsc -b` проверяет TypeScript;
+3. `vite build` собирает приложение и запускает ZIP-плагин.
 
 ## Результат
 
@@ -35,3 +36,20 @@ Vite использует относительный `base: "./"`, поэтом�
 ```bash
 npm run deploy
 ```
+
+## Публикация после сборки
+
+`npm run deploy` берёт ZIP из `dist-zip/` и загружает его в NSMP. Перед публикацией создайте `.env.deploy.local` и задайте в нём `NSMP_URL` и `NSMP_ACCESS_KEY`:
+
+```bash
+cp example.env.deploy .env.deploy.local
+npm run deploy
+```
+
+Если нужно выполнить сборку и публикацию подряд, используйте:
+
+```bash
+npm run release
+```
+
+Подробные параметры публикации описаны в разделе [«Публикация в NSMP»](./deployment).

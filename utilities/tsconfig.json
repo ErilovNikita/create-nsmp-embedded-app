@@ -1,0 +1,10 @@
+{
+  "extends": "../template/tsconfig.app.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.utilities.tsbuildinfo"
+  },
+  "include": [
+    "./**/*.ts",
+    "../template/src/vite-env.d.ts"
+  ]
+}
