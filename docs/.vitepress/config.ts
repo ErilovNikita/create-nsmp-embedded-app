@@ -55,6 +55,14 @@ export default defineConfig({
           ]
         },
         {
+          text: 'Скрипты',
+          items: [
+            { text: 'Обзор скриптов', link: '/template/scripts/' },
+            { text: 'Упаковка модулей', link: '/template/scripts/pack-modules' },
+            { text: 'Публикация в NSMP', link: '/template/scripts/deploy' }
+          ]
+        },
+        {
           text: 'Утилиты',
           items: [
             { text: 'Утилиты шаблона', link: '/template/utils/' },
