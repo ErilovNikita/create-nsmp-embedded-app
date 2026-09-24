@@ -1,15 +1,15 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-async function assertTargetDoesNotExist(targetDir) {
+async function createTargetDirectory(targetDir) {
     try {
-        await fs.access(targetDir)
+        await fs.mkdir(targetDir)
     } catch (error) {
-        if (error.code === 'ENOENT') return
+        if (error.code === 'EEXIST') {
+            throw new Error(`Папка уже существует: ${targetDir}`)
+        }
         throw error
     }
-
-    throw new Error(`Папка уже существует: ${targetDir}`)
 }
 
 async function updatePackageJson(targetDir, projectName, dependencies) {
@@ -79,7 +79,7 @@ export async function createProject({
     projectName,
     dependencies = {}
 }) {
-    await assertTargetDoesNotExist(targetDir)
+    await createTargetDirectory(targetDir)
     await fs.cp(templateDir, targetDir, {
         recursive: true,
         filter: source => {

@@ -281,3 +281,27 @@ test('createProject refuses to overwrite an existing directory', async t => {
         /Папка уже существует/
     )
 })
+
+test('createProject reserves the target directory before copying files', async t => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'nsmp-cli-'))
+    t.after(() => fs.rm(tempDir, { recursive: true, force: true }))
+
+    const sourceDir = path.join(tempDir, 'template')
+    const targetDir = path.join(tempDir, 'generated-app')
+    await fs.mkdir(sourceDir)
+    await fs.writeFile(path.join(sourceDir, 'package.json'), JSON.stringify({ name: 'template' }))
+    await fs.writeFile(path.join(sourceDir, 'index.html'), '<title>Template</title>')
+
+    await Promise.all([
+        createProject({ templateDir: sourceDir, targetDir, projectName: 'generated-app' }),
+        assert.rejects(
+            createProject({ templateDir: sourceDir, targetDir, projectName: 'generated-app' }),
+            /Папка уже существует/
+        )
+    ])
+
+    assert.equal(
+        JSON.parse(await fs.readFile(path.join(targetDir, 'package.json'), 'utf8')).name,
+        'generated-app'
+    )
+})
