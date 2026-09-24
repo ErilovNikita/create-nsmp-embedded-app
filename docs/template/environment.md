@@ -24,7 +24,9 @@ cp example.env .env.development
 | `VITE_SUBJECT_UUID` | UUID объекта для локального режима |
 | `VITE_USER_LOGIN` | Логин пользователя |
 
-`VITE_APP_CODE` создаётся автоматически в локальном `.env.local`. Если файла нет, для сборки используется имя пакета.
+При создании проекта генератор записывает `VITE_APP_CODE` в локальный
+`.env.local`. Если переменная не задана, для имени ZIP-архива используется имя
+пакета из `package.json`.
 
 ## Окружение публикации
 
@@ -38,13 +40,17 @@ cp example.env.deploy .env.deploy.local
 | --- | --- | --- | --- |
 | `NSMP_URL` | да | — | URL инсталляции без `/sd` |
 | `NSMP_ACCESS_KEY` | да | — | Ключ доступа |
-| `NSMP_APP_CODE` | нет | `VITE_APP_CODE` или имя пакета | Код embedded-приложения |
+| `NSMP_APP_CODE` | нет | `VITE_APP_CODE` или имя пакета | Код embedded-приложения при загрузке |
 | `NSMP_APP_TITLE` | нет | код приложения | Отображаемое название |
 | `NSMP_APP_MIN_HEIGHT` | нет | `1000` | Минимальная высота |
 | `NSMP_APP_ENABLE` | нет | `true` | Включить приложение после загрузки |
 | `NSMP_TLS_REJECT_UNAUTHORIZED` | нет | `true` | Проверять TLS-сертификат |
 
 Булевы значения принимают только строки `true` и `false`.
+
+`NSMP_APP_CODE` определяет код приложения в NSMP, но не имя уже собранного
+архива. Имя ZIP формируется из `VITE_APP_CODE` или `name` и `version` в
+`package.json`.
 
 ::: danger Проверка TLS
 Устанавливайте `NSMP_TLS_REJECT_UNAUTHORIZED=false` только для доверенной тестовой инсталляции с самоподписанным сертификатом.
