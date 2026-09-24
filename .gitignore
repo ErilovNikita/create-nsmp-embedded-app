@@ -5,6 +5,8 @@ node_modules/
 dist/
 dist-zip/
 build/
+template/public/modules/*
+template/public/modules
 
 # Local environment files
 .env
