@@ -2,7 +2,7 @@
 
 [Вернуться к списку утилит](./)
 
-Модуль `dispatch` использует штатный endpoint - `/sd/admin/dispatch` для выполнения запросов в формате GWT-RPC. 
+Модуль `dispatch` использует штатный endpoint - `/sd/operator/dispatch` для выполнения запросов в формате GWT-RPC. 
 
 Утилита формирует POST-запрос с именем action, параметрами и данными
 GWT-сборки, а затем проверяет и декодирует ответ от NSMP. 
@@ -118,7 +118,7 @@ console.log(defaultTheme)
 ```ts
 const client = new Dispatch({
   baseUrl: 'https://nsmp.example.com',
-  modulePath: '/sd/admin/',
+  modulePath: '/sd/operator/',
   csrfToken: 'known-csrf-token',
   policyHash: '0123456789ABCDEF0123456789ABCDEF',
   actionSignature: '1234567890',
@@ -129,9 +129,9 @@ const client = new Dispatch({
 | Параметр | Значение по умолчанию |
 | --- | --- |
 | `baseUrl` | `window.location.origin` |
-| `modulePath` | `/sd/admin/` |
+| `modulePath` | `/sd/operator/` |
 | `csrfToken` | `meta[name="_csrf"]` текущего или родительского документа |
-| `policyHash` | `/sd/admin/police.txt` |
+| `policyHash` | `/sd/operator/police.txt` |
 | `actionSignature` | Сигнатура из файла `<policyHash>.gwt.rpc` |
 | `permutation` | Значение `policyHash` |
 

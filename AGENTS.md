@@ -73,7 +73,7 @@ try {
 
 `getPersonalSettings(userUuid)` возвращает персональные настройки, включая темы оператора и администратора, локаль, часовой пояс и размер шрифта; учитывайте nullable-поля. `getAllPersonalSettings()` возвращает доступные темы в `themes` и общие настройки. `dispatch(action, userUuid, actionSignature?)` выполняет произвольный action и возвращает сырой ответ.
 
-Клиент обращается к `/sd/admin/dispatch`, автоматически ищет CSRF-токен в текущем или родительском документе, получает policy hash из `police.txt` и сигнатуры из `<policyHash>.gwt.rpc`. Для нестандартной инсталляции передайте `DispatchOptions`: `baseUrl`, `modulePath`, `csrfToken`, `policyHash`, `actionSignature`, `permutation`. Неверный UUID вызывает `TypeError`; ошибки протокола — `GwtDispatchError`, содержащий `responseBody`. Не выводите полные ответы с персональными данными в пользовательский интерфейс.
+Клиент обращается к `/sd/operator/dispatch`, автоматически ищет CSRF-токен в текущем или родительском документе, получает policy hash из `police.txt` и сигнатуры из `<policyHash>.gwt.rpc`. Для нестандартной инсталляции передайте `DispatchOptions`: `baseUrl`, `modulePath`, `csrfToken`, `policyHash`, `actionSignature`, `permutation`. Неверный UUID вызывает `TypeError`; ошибки протокола — `GwtDispatchError`, содержащий `responseBody`. Не выводите полные ответы с персональными данными в пользовательский интерфейс.
 
 ## Утилита theme
 
