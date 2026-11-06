@@ -186,7 +186,10 @@ export const decodeAllPersonalSettings = (body: string): AllPersonalSettings => 
   const defaultTitle = markerIndex < 0 ? null : strings[markerIndex + 1]
   const themeTitle = defaultTitle?.match(/^.*\((.*)\)$/)?.[1] ?? null
   const themeTitleIndex = themeTitle ? strings.indexOf(themeTitle) : -1
-  const themeCode = themeTitleIndex > 0 ? strings[themeTitleIndex - 1] : null
+  let themeCode = themeTitleIndex > 0 ? strings[themeTitleIndex - 1] : null
+
+  if (themeCode == 'style.properties') themeCode = strings[themeTitleIndex - 4]
+  if (themeCode?.indexOf('/ru/naumen/core') !== -1) themeCode = strings[themeTitleIndex - 2]
 
   const themes: ThemeClient[] = themeCode
     ? [{
